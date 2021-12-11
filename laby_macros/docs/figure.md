@@ -1,0 +1,1 @@
+The **`<figure>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element represents self-contained content, potentially with an optional caption, which is specified using the [`figcaption`](figcaption!) element. The figure, its caption, and its contents are referenced as a single unit.

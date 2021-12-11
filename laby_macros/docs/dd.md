@@ -1,0 +1,1 @@
+The **`<dd>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element provides the description, definition, or value for the preceding term ([`dt`](dt!)) in a description list ([`dl`](dl!)).

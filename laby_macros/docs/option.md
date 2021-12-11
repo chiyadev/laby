@@ -1,0 +1,1 @@
+The **`<option>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element is used to define an item contained in a [`select`](select!), an [`optgroup`](optgroup!), or a [`datalist`](datalist!) element. As such, `<option>` can represent menu items in popups and other lists of items in an HTML document.

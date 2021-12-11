@@ -1,0 +1,1 @@
+The **`<abbr>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element represents an abbreviation or acronym; the optional `title` attribute can provide an expansion or description for the abbreviation. If present, `title` must contain this full description and nothing else.

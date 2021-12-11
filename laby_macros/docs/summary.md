@@ -1,0 +1,1 @@
+The **`<summary>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element specifies a summary, caption, or legend for a [`details`](details!) element's disclosure box. Clicking the `<summary>` element toggles the state of the parent `<details>` element open and closed.

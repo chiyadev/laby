@@ -1,0 +1,1 @@
+The **`<samp>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element is used to enclose inline text which represents sample (or quoted) output from a computer program. Its contents are typically rendered using the browser's default monospaced font (such as {{interwiki("wikipedia", "Courier (typeface)", "Courier")}} or Lucida Console).

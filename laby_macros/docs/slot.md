@@ -1,0 +1,1 @@
+The **`<slot>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element—part of the [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) technology suite—is a placeholder inside a web component that you can fill with your own markup, which lets you create separate DOM trees and present them together.

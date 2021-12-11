@@ -1,0 +1,3 @@
+The **`<fieldset>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element is used to group several controls as well as labels ([`label`](label!)) within a web form.
+
+As the example above shows, the `<fieldset>` element provides a grouping for a part of an HTML form, with a nested [`legend`](legend!) element providing a caption for the `<fieldset>`. It takes few attributes, the most notable of which are `form`, which can contain the `id` of a [`form`](form!) on the same page, allowing you to make the `<fieldset>` part of that `<form>` even if it is not nested inside it, and `disabled`, which allows you to disable the `<fieldset>` and all its contents in one go.

@@ -1,13 +1,16 @@
 [package]
 name = "laby"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2021"
 license = "MIT"
 description = "Small macro HTML templating library"
-repository = "https://fossil.chiya.dev/laby"
+repository = "https://github.com/chiyadev/laby"
 readme = "README.md"
 categories = ["template-engine"]
 
+[features]
+decl_macro = ["laby_macros/decl_macro"]
+
 [dependencies]
-laby_common = { path = "../laby_common", version = "0.1.0" }
-laby_macros = { path = "../laby_macros", version = "0.1.1" }
+laby_common = { path = "../laby_common", version = "0.1.1" }
+laby_macros = { path = "../laby_macros", version = "0.1.2" }

@@ -1,10 +1,10 @@
 [package]
 name = "laby_macros"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 license = "MIT"
 description = "HTML transformation macros for laby"
-repository = "https://fossil.chiya.dev/laby"
+repository = "https://github.com/chiyadev/laby"
 exclude = ["docs/content/*"]
 
 [lib]
@@ -14,7 +14,7 @@ proc-macro = true
 decl_macro = []
 
 [dependencies]
-laby_common = { path = "../laby_common", version = "0.1.0" }
+laby_common = { path = "../laby_common", version = "0.1.1" }
 syn = { version = "1", features = ["full"] }
 proc-macro2 = "1"
 quote = "1"

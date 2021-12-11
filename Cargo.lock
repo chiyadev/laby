@@ -16,7 +16,7 @@ checksum = "9028f49264629065d057f340a86acb84867925865f73bbf8d47b4d149a7e88b8"
 
 [[package]]
 name = "laby"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "laby_common",
  "laby_macros",
@@ -24,7 +24,7 @@ dependencies = [
 
 [[package]]
 name = "laby_common"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "itoap",
  "raw-cpuid",
@@ -33,7 +33,7 @@ dependencies = [
 
 [[package]]
 name = "laby_macros"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "laby_common",
  "proc-macro2",
@@ -70,9 +70,9 @@ dependencies = [
 
 [[package]]
 name = "ryu"
-version = "1.0.6"
+version = "1.0.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c9613b5a66ab9ba26415184cfc41156594925a9cf3a2057e57f31ff145f6568"
+checksum = "254df5081ce98661a883445175e52efe99d1cb2a5552891d965d2f5d0cad1c16"
 
 [[package]]
 name = "syn"

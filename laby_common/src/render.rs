@@ -55,6 +55,11 @@ pub trait Render {
     fn render(self, buffer: &mut Buffer);
 }
 
+impl Render for () {
+    #[inline]
+    fn render(self, _: &mut Buffer) {}
+}
+
 impl Render for char {
     #[inline]
     fn render(self, buffer: &mut Buffer) {

@@ -1,0 +1,1 @@
+The **`<ins>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element represents a range of text that has been added to a document. You can use the [`del`](del!) element to similarly represent a range of text that has been deleted from the document.

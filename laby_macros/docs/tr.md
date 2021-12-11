@@ -1,0 +1,5 @@
+The **`<tr>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element defines a row of cells in a table. The row's cells can then be established using a mix of [`td`](td!) (data cell) and [`th`](th!) (header cell) elements.
+
+To provide additional control over how cells fit into (or span across) columns, both `<th>` and `<td>` support the `colspan", "td` attribute, which lets you specify how many columns wide the cell should be, with the default being 1. Similarly, you can use the `rowspan", "td` attribute on cells to indicate they should span more than one table row.
+
+This can take a little practice to get right when building your tables. We have some examples below, but for more examples and an in-depth tutorial, see the [HTML tables](https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables) series in our [Learn web development](https://developer.mozilla.org/en-US/docs/Learn) area, where you'll learn how to use the table elements and their attributes to get just the right layout and formatting for your tabular data.

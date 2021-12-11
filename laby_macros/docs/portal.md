@@ -1,0 +1,3 @@
+The **`<portal>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element enables the embedding of another HTML page into the current one for the purposes of allowing smoother navigation into new pages.
+
+A `<portal>` is similar to an `<iframe>`. An `<iframe>` allows a separate browsing context to be embedded. However, the embedded content of a `<portal>` is more limited than that of an `<iframe>`. It cannot be interacted with, and therefore is not suitable for embedding widgets into a document. Instead, the `<portal>` acts as a preview of the content of another page. It can be navigated into therefore allowing for seamless transition to the embedded content.

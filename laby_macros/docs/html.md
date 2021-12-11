@@ -1,0 +1,1 @@
+The **`<html>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element represents the root (top-level element) of an HTML document, so it is also referred to as the _root element_. All other elements must be descendants of this element.

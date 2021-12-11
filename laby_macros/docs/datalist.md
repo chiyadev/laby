@@ -1,0 +1,1 @@
+The **`<datalist>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element contains a set of [`option`](option!) elements that represent the permissible or recommended options available to choose from within other controls.

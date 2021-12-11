@@ -1,0 +1,12 @@
+[package]
+name = "laby_common"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+description = "Shared code required by laby"
+repository = "https://fossil.chiya.dev/laby"
+
+[dependencies]
+raw-cpuid = "10"
+itoap = "1"
+ryu = "1"

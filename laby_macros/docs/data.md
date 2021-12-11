@@ -1,0 +1,1 @@
+The **`<data>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element links a given piece of content with a machine-readable translation. If the content is time- or date-related, the [`time`](time!) element must be used.

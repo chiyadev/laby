@@ -10,6 +10,9 @@ exclude = ["docs/content/*"]
 [lib]
 proc-macro = true
 
+[features]
+decl_macro = []
+
 [dependencies]
 laby_common = { path = "../laby_common", version = "0.1.0" }
 syn = { version = "1", features = ["full"] }

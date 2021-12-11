@@ -238,7 +238,7 @@
 //! Writing a large template for rendering an entire HTML document quickly becomes unwieldy and
 //! unmaintainable, so it is often necessary to break up the document into several smaller
 //! components. There are two popular techniques around this problem: *include* and *inherit*.
-//! laby supports both patterns, using only the language features provided by Rust.
+//! laby supports both patterns, using the language features provided by Rust.
 //!
 //! In practice, these patterns are often mixed and matched together to form a complete and
 //! coherent document. Examples of both approaches are explored below.
@@ -340,6 +340,42 @@
 //! ");
 //! ```
 //!
+//! ## Naming arguments
+//!
+//! Sometimes components can get big and accept a long list of positional arguments that worsens
+//! readability. laby provides an attribute macro called [`#[laby]`][13] which allows you to call
+//! arbitrary functions with explicitly named arguments and optional values, similar to HTML
+//! macros.
+//!
+//! To enable support, simply prepend the attribute before the component function and call it
+//! using the generated macro.
+//!
+//! ```
+//! # use laby::*;
+//! #[laby]
+//! fn page(title: impl Render, header: impl Render, body: impl Render) -> impl Render {
+//!     html!(
+//!         head!(
+//!             title!(title),
+//!         ),
+//!         body!(
+//!             header!(header),
+//!             main!(body),
+//!         ),
+//!     )
+//! }
+//!
+//! #[laby]
+//! fn home() -> impl Render {
+//!     // `page` function called using the generated `page!` macro
+//!     page!(
+//!         title = "Home",
+//!         header = h1!("About laby"),
+//!         body = p!("laby is an HTML macro library for Rust."),
+//!     )
+//! }
+//! ```
+//!
 //! # Extensions
 //!
 //! laby can be extended by simply implementing the [`Render`] trait, which is a low-level trait
@@ -378,6 +414,7 @@
 //! [10]: https://github.com/Kogia-sima
 //! [11]: https://developer.mozilla.org/
 //! [12]: https://github.com/mdn/content/blob/main/LICENSE.md
+//! [13]: laby
 #![no_std]
 #![deny(missing_docs)]
 extern crate alloc;

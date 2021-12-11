@@ -95,7 +95,7 @@ fn build_inner(element: Element, stream: TokenStream, node: &mut Node) -> syn::R
             match child {
                 Expr::Macro(ref expr) => {
                     if let Some(ident) = expr.mac.path.get_ident() {
-                        if let Some(element) = get_element(&ident.to_string()) {
+                        if let Some(element) = get_element(ident.to_string()) {
                             // flatten nested markup
                             build_inner(element, expr.mac.tokens.clone(), node)?;
                             continue;

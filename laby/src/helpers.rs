@@ -155,6 +155,9 @@ macro_rules! render {
 /// All items yielded by the iterator must implement [`Render`],
 /// which will be rendered sequentially without delimiters.
 ///
+/// This renderer is lazy; the iterator wrapped by this object will only be iterated when
+/// [`render`][Render::render] is called on this object, not when this object is constructed.
+///
 /// Consider using the [`iter!`] macro instead of constructing this type manually.
 pub struct RenderIterator<R: Render, I: Iterator<Item = R>>(
     /// The iterator from which items are rendered.
@@ -182,6 +185,9 @@ impl<R: Render, I: Iterator<Item = R>> Render for RenderIterator<R, I> {
 /// All items yielded by the iterator must implement [`Render`],
 /// which will be rendered sequentially with a string delimiter in between.
 /// The delimiter is **not escaped**.
+///
+/// This renderer is lazy; the iterator wrapped by this object will only be iterated when
+/// [`render`][Render::render] is called on this object, not when this object is constructed.
 ///
 /// Consider using the [`iter!`] macro instead of constructing this type manually.
 pub struct RenderIteratorDelimited<R: Render, I: Iterator<Item = R>, S: AsRef<str>>(

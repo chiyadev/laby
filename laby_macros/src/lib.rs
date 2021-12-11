@@ -14,11 +14,13 @@
 extern crate proc_macro;
 
 use component::generate_component_macro;
+use matching::generate_frag_match;
 use node::{Element, Node};
 use proc_macro::{Group, Span, TokenStream, TokenTree};
 
 mod build;
 mod component;
+mod matching;
 mod node;
 
 macro_rules! declare_tag {
@@ -388,4 +390,13 @@ pub fn __laby_internal_set_hygiene_call_site(stream: TokenStream) -> TokenStream
     }
 
     result.into_iter().collect()
+}
+
+/// TODO:
+#[proc_macro]
+pub fn frag_match(stream: TokenStream) -> TokenStream {
+    match generate_frag_match(stream.into()) {
+        Ok(stream) => stream.into(),
+        Err(error) => error.to_compile_error().into(),
+    }
 }

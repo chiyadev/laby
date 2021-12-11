@@ -425,4 +425,318 @@ mod helpers;
 pub use doctype::*;
 pub use helpers::*;
 pub use laby_common::*;
-pub use laby_macros::*;
+pub use laby_macros::{
+    __laby_internal_set_hygiene_call_site, a, abbr, address, area, article, aside, audio, b, base,
+    bdi, bdo, blockquote, body, br, button, canvas, caption, cite, code, col, colgroup, data,
+    datalist, dd, del, details, dfn, dialog, div, dl, dt, em, embed, fieldset, figcaption, figure,
+    footer, form, h1, h2, h3, h4, h5, h6, head, header, hgroup, hr, html, i, iframe, img, input,
+    ins, kbd, label, legend, li, link, main, map, mark, menu, menuitem, meta, meter, nav, noscript,
+    object, ol, optgroup, option, output, p, param, picture, pre, progress, q, rb, rp, rt, rtc,
+    ruby, s, samp, script, section, select, slot, small, source, span, strong, style, sub, summary,
+    sup, table, tbody, td, template, textarea, tfoot, th, thead, time, title, tr, track, u, ul,
+    var, video, wbr,
+};
+
+/// Generates a macro that calls a function with named parameters.
+///
+/// Named parameters can be useful when a function accepts several arguments, because explicitly
+/// stating the arguments with parameter names can improve readability.
+///
+/// This attribute macro generates a *function-like macro*, with the same visibility and path as
+/// the target function, which allows callers to call that function with the arguments specified
+/// in any arbitrary order using *assignment-like expressions* (`$name = $value`).
+///
+/// Although this attribute is provided for use in laby components, its implementation is not
+/// specific to laby. It may be applied to any function, albeit with some caveats documented below.
+/// Refer to the crate-level documentation for more usage examples.
+///
+/// # Default arguments
+///
+/// By default, all arguments must be specified explicitly, even [`Option<T>`] types. Omittable
+/// arguments are opt-in. To mark a parameter as omittable, use the `#[default]` attribute.
+///
+/// ```
+/// # use laby::*;
+/// #[laby]
+/// fn foo(x: Option<&str>) {
+///     assert!(x.is_none());
+/// }
+///
+/// #[laby]
+/// fn bar(#[default] x: Option<&str>) {
+///     assert!(x.is_none());
+/// }
+///
+/// foo!(x = None); // required
+/// bar!(x = None); // omittable
+/// bar!(); // omitted; same as above
+/// ```
+///
+/// The `#[default]` attribute by default defaults to [`Default::default()`]. This behavior can be
+/// customized by passing an expression as the attribute argument. The expression is evaluated in
+/// the macro expansion context.
+///
+/// ```
+/// # use laby::*;
+/// #[laby]
+/// fn test(left: &str, #[default("lyba")] right: &str) {
+///     assert_eq!(left, right);
+/// }
+///
+/// test!(left = "laby", right = "laby");
+/// test!(left = "lyba", right = "lyba");
+/// test!(left = "lyba"); // omitted; same as above
+/// ```
+///
+/// # Caveats
+///
+/// ## Function must be free-standing
+///
+/// The target function with this attribute must be free-standing; it must be declared at the
+/// module-level, not within a `trait` or `impl` block. This is because Rust simply does not
+/// support macro declarations in such places.
+///
+/// ```compile_fail
+/// struct Foo;
+///
+/// #[laby]
+/// fn good(x: &Foo) {}
+///
+/// impl Foo {
+///     #[laby]
+///     fn bad(&self) {}
+/// }
+/// ```
+///
+/// ## Function should not be named after an HTML tag
+///
+/// When a markup macro is invoked within another containing markup macro invocation, laby
+/// recognizes this pattern internally and inlines that nested invocation into the parent
+/// invocation as an optimization, regardless of whether that macro is indeed a markup macro or
+/// another macro with a conflicting name that actually does completely different things. As a
+/// workaround, you may alias the function with a different name.
+///
+/// ```compile_fail
+/// # use laby::*;
+/// #[laby]
+/// fn article() -> impl Render {
+///     "foo"
+/// }
+///
+/// fn good() {
+///     use article as foo;
+///
+///     let s = render!(div!(foo!()));
+///     assert_eq!(s, "<div>foo</div>");
+/// }
+///
+/// fn bad() {
+///     let s = render!(div!(article!()));
+///     assert_eq!(s, "<div>foo</div>"); // <div><article></article></div>
+/// }
+/// # good(); bad();
+/// ```
+///
+/// ## Macro must be imported into scope
+///
+/// When calling the target function using the generated macro, both that function and the macro
+/// must be imported directly into the current scope. It cannot be called by relative or fully
+/// qualified paths. This is due to hygiene limitations of `macro_rules!` which prevent functions
+/// from being referenced within macros unambiguously.
+///
+/// This caveat can be circumvented by enabling the `decl_macro` feature.
+///
+/// ```compile_fail
+/// # use laby::*;
+/// mod foo {
+///     #[laby]
+///     pub fn bar() {}
+/// }
+///
+/// fn good() {
+///     use foo::bar;
+///     bar!();
+/// }
+///
+/// fn bad() {
+///     foo::bar!(); // no function `bar` in scope
+/// }
+/// # good(); bad();
+/// ```
+///
+/// ## Macro is not exported outside the crate
+///
+/// The generated macro is defined using `macro_rules!` which prevents macros from being exported
+/// in modules other than the crate root. Due to this limitation, the maximum visibility of the
+/// generated macro is restricted to `pub(crate)` even if the target function is `pub`.
+/// `#[macro_export]` is not used.
+///
+/// This caveat can be circumvented by enabling the `decl_macro` feature.
+///
+/// ```compile_fail
+/// # use laby::*;
+/// // crate_a
+/// #[laby]
+/// pub fn foo() {}
+///
+/// fn good() {
+///     foo!();
+/// }
+///
+/// // crate_b
+/// fn bad() {
+///     use crate_a::foo; // macro `foo` is private
+///     foo!();
+/// }
+/// # good(); bad();
+/// ```
+///
+/// # Macros 2.0 support
+///
+/// laby comes with support for the experimental [Declarative Macros 2.0][1] compiler feature
+/// which can be enabled using the feature flag `decl_macro`. This requires a nightly compiler.
+///
+/// To enable this feature, add laby's feature flag in your `Cargo.toml`,
+///
+/// ```toml
+/// [dependencies]
+/// laby = { version = "...", features = ["decl_macro"] }
+/// ```
+///
+/// and enable the compiler's feature flag in your crate root.
+///
+/// ```
+/// #![feature(decl_macro)]
+/// ```
+///
+/// The generated macros will now use the new `macro foo { ... }` syntax instead of
+/// `macro_rules! foo { ... }`.
+///
+/// [1]: https://rust-lang.github.io/rfcs/1584-macros.html
+pub use laby_macros::laby;
+
+/// Wraps multiple values implementing [`Render`][2] into one.
+///
+/// This macro is similar to [React fragments][1] which wrap multiple nodes into one.
+/// It is useful when passing multiple values to a function that accepts only one value,
+/// or when returning multiple values as one return value.
+///
+/// All wrapped values will be rendered sequentially in the order of arguments without
+/// delimiters.
+///
+/// [1]: https://reactjs.org/docs/fragments.html
+/// [2]: laby_common::Render
+///
+/// # Example
+///
+/// The following example passes multiple nodes to a function that accepts only one node,
+/// by wrapping the arguments in [`frag!`]. By using fragments, intermediary container
+/// elements like [`div`](div!) can be avoided, because they may change the semantics
+/// of the markup.
+///
+/// ```
+/// # use laby::*;
+/// fn component(node: impl Render) -> impl Render {
+///     ul!(node)
+/// }
+///
+/// let s = render!(component(frag!(
+///     li!("one"),
+///     li!("two"),
+/// )));
+///
+/// assert_eq!(s, "<ul><li>one</li><li>two</li></ul>");
+/// ```
+///
+/// This example returns multiple nodes from a function with only one return value.
+///
+/// ```
+/// # use laby::*;
+/// fn component() -> impl Render {
+///     frag!(
+///         li!("one"),
+///         li!("two"),
+///     )
+/// }
+///
+/// let s = render!(ul!(component()));
+/// assert_eq!(s, "<ul><li>one</li><li>two</li></ul>");
+/// ```
+pub use laby_macros::frag;
+
+/// Wraps a `match` or `if` expression returning [`Render`][1] into one.
+///
+/// This macro allows a `match` or `if` expression to return different types of [`Render`][1]
+/// implementations which would otherwise be disallowed because of mismatching types.
+///
+/// It is named so because it uses a set of [`Option<T>`] variables and the [`frag!`][2] macro
+/// internally to render each variant.
+///
+/// # Expansion
+///
+/// ```ignore
+/// // frag_match!(match $expr { $pat => $expr })
+/// {
+///     let mut variant1 = None, mut variant2 = None, ..;
+///
+///     match $expr {
+///         $pat => variant1 = Some($expr),
+///         $pat => variant2 = Some($expr), ..
+///     }
+///
+///     frag!(variant1, variant2, ..)
+/// }
+/// ```
+///
+/// # Examples
+///
+/// This example adds different types of nodes to a [`Vec<T>`][3] using the [`frag_match!`] macro.
+///
+/// ```
+/// # use laby::*;
+/// let mut vec = Vec::new();
+///
+/// for value in ["div", "span", "img"] {
+///     vec.push(frag_match!(match value {
+///         "div" => div!(),
+///         "span" => span!(),
+///         "img" => img!(),
+///         _ => unreachable!(),
+///     }));
+/// }
+///
+/// let s = render!(iter!(vec));
+/// assert_eq!(s, "<div></div><span></span><img>");
+/// ```
+///
+/// [1]: laby_common::Render
+/// [2]: laby_macros::frag
+/// [3]: alloc::vec::Vec
+pub use laby_macros::frag_match;
+
+/// Wraps multiple values implementing [`Render`][1] into one, with a space delimiter.
+///
+/// This macro behaves similarly to the [`frag!`] macro. The only difference is that all
+/// wrapped values will be rendered sequentially in the order of arguments,
+/// but with a single space character `' '` to delimit each value.
+///
+/// It can be convenient when generating an interpolated string for the `class` attribute
+/// in a markup.
+///
+/// [1]: laby_common::Render
+///
+/// # Example
+///
+/// The following example generates a class string with several values interpolated.
+/// `four` is not included because it is [`None`].
+///
+/// ```
+/// # use laby::*;
+/// let two = Some("two");
+/// let four: Option<&str> = None;
+/// let six = 6;
+///
+/// let s = classes!("one", two, "three", four, "five", six);
+/// assert_eq!(render!(s), "one two three  five 6");
+/// ```
+pub use laby_macros::classes;

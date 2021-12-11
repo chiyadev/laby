@@ -42,7 +42,7 @@ macro_rules! declare_tags {
                 $(#[$attr])*
                 #[doc = concat!("[`<", stringify!($name), ">`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/", stringify!($name), ") element.")]
                 #[doc = ""]
-                #[doc = include_str!(concat!("../docs/", stringify!($name), ".md"))]
+                #[doc = include_str!(concat!("../html_docs/", stringify!($name), ".md"))]
                 $name,
                 Element::$type(stringify!($name))
             );

@@ -5,7 +5,7 @@ edition = "2021"
 license = "MIT"
 description = "HTML transformation macros for laby"
 repository = "https://github.com/chiyadev/laby"
-exclude = ["docs/content/*"]
+exclude = ["html_docs/content/*"]
 
 [lib]
 proc-macro = true

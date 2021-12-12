@@ -6,7 +6,6 @@
 //
 //   https://opensource.org/licenses/MIT
 //
-#![feature(decl_macro)]
 use laby::*;
 
 #[test]
@@ -95,6 +94,68 @@ fn default_args() {
 }
 
 #[test]
+fn default_args_generic() {
+    #[laby]
+    fn test<T>(#[default("one")] x: T) -> T {
+        x
+    }
+
+    assert_eq!(render!(test!()), "one");
+    assert_eq!(render!(test!(x = "two")), "two");
+
+    // allowed
+    assert_eq!(render!(test!(x = 3)), "3");
+}
+
+#[test]
+fn default_args_render() {
+    #[laby]
+    fn test(#[default(())] x: impl Render) -> String {
+        render!(x)
+    }
+
+    assert_eq!(test!(), "");
+    assert_eq!(test!(x = "s"), "s");
+    assert_eq!(test!(x = div!("s")), "<div>s</div>");
+
+    assert_eq!(
+        test!(x = Some(div!(Some(div!("s"))))),
+        "<div><div>s</div></div>"
+    );
+}
+
+#[test]
+fn other() {
+    #[laby]
+    fn test(#[other] children: impl Render, x: impl Render) -> String {
+        render!(x, ": ", children)
+    }
+
+    assert_eq!(test!(x = "one", "1"), "one: 1");
+    assert_eq!(test!(x = "two", "2", "2"), "two: 22");
+    assert_eq!(test!(x = "three", "3", "3", "3"), "three: 333");
+    assert_eq!(test!("1", "2", x = "mixed", "3", "4"), "mixed: 1234");
+
+    assert_eq!(
+        test!(div!("one"), span!("two"), x = "complex"),
+        "complex: <div>one</div><span>two</span>"
+    );
+}
+
+#[test]
+fn duplicates() {
+    #[laby]
+    fn test(#[default("yes")] x: &str) {
+        assert_eq!(x, "yes");
+    }
+
+    test!();
+    test!(x = "yes");
+    test!(x = "one", x = "yes");
+    test!(x = "one", x = "two", x = "yes");
+}
+
+#[test]
 fn direct_call() {
     #[laby]
     fn test(arg: &'static str) -> impl Render {
@@ -111,22 +172,16 @@ fn direct_call() {
 #[test]
 fn modules() {
     mod nested {
-        pub mod nested {
-            pub mod nested {
-                #[laby::laby]
-                #[allow(dead_code)]
-                fn hidden() {}
+        #[laby::laby]
+        #[allow(dead_code)]
+        pub fn hidden() {}
 
-                #[laby::laby]
-                pub fn visible() {}
-            }
-        }
+        #[laby::laby]
+        pub fn visible() {}
     }
 
-    use nested::nested::nested::*;
+    use nested::visible;
+    nested::visible!();
 
-    visible();
-    visible!();
-
-    //hidden();
+    //nested::hidden!();
 }

@@ -39,7 +39,7 @@ use laby_common::{internal::Buffer, Render};
 #[macro_export]
 macro_rules! bool {
     ($($x:tt)*) => {
-        panic!("invalid use of boolean macro")
+        ::core::compile_error!("invalid use of boolean macro")
     };
 }
 

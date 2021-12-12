@@ -426,20 +426,20 @@ pub use doctype::*;
 pub use helpers::*;
 pub use laby_common::*;
 pub use laby_macros::{
-    __laby_internal_set_hygiene_call_site, a, abbr, address, area, article, aside, audio, b, base,
-    bdi, bdo, blockquote, body, br, button, canvas, caption, cite, code, col, colgroup, data,
-    datalist, dd, del, details, dfn, dialog, div, dl, dt, em, embed, fieldset, figcaption, figure,
-    footer, form, h1, h2, h3, h4, h5, h6, head, header, hgroup, hr, html, i, iframe, img, input,
-    ins, kbd, label, legend, li, link, main, map, mark, menu, menuitem, meta, meter, nav, noscript,
-    object, ol, optgroup, option, output, p, param, picture, pre, progress, q, rb, rp, rt, rtc,
-    ruby, s, samp, script, section, select, slot, small, source, span, strong, style, sub, summary,
-    sup, table, tbody, td, template, textarea, tfoot, th, thead, time, title, tr, track, u, ul,
-    var, video, wbr,
+    __laby_internal_call_fn_named, __laby_internal_set_hygiene_call_site, a, abbr, address, area,
+    article, aside, audio, b, base, bdi, bdo, blockquote, body, br, button, canvas, caption, cite,
+    code, col, colgroup, data, datalist, dd, del, details, dfn, dialog, div, dl, dt, em, embed,
+    fieldset, figcaption, figure, footer, form, h1, h2, h3, h4, h5, h6, head, header, hgroup, hr,
+    html, i, iframe, img, input, ins, kbd, label, legend, li, link, main, map, mark, menu,
+    menuitem, meta, meter, nav, noscript, object, ol, optgroup, option, output, p, param, picture,
+    pre, progress, q, rb, rp, rt, rtc, ruby, s, samp, script, section, select, slot, small, source,
+    span, strong, style, sub, summary, sup, table, tbody, td, template, textarea, tfoot, th, thead,
+    time, title, tr, track, u, ul, var, video, wbr,
 };
 
-/// Generates a macro that calls a function with named parameters.
+/// Generates a macro that calls a function with named arguments.
 ///
-/// Named parameters can be useful when a function accepts several arguments, because explicitly
+/// Named arguments can be useful when a function accepts several arguments, because explicitly
 /// stating the arguments with parameter names can improve readability.
 ///
 /// This attribute macro generates a *function-like macro*, with the same visibility and path as
@@ -450,7 +450,7 @@ pub use laby_macros::{
 /// specific to laby. It may be applied to any function, albeit with some caveats documented below.
 /// Refer to the crate-level documentation for more usage examples.
 ///
-/// # Default arguments
+/// # `#[default]` arguments
 ///
 /// By default, all arguments must be specified explicitly, even [`Option<T>`] types. Omittable
 /// arguments are opt-in. To mark a parameter as omittable, use the `#[default]` attribute.
@@ -472,9 +472,9 @@ pub use laby_macros::{
 /// bar!(); // omitted; same as above
 /// ```
 ///
-/// The `#[default]` attribute by default defaults to [`Default::default()`]. This behavior can be
-/// customized by passing an expression as the attribute argument. The expression is evaluated in
-/// the macro expansion context.
+/// This attribute by default defaults to [`Default::default()`]. This behavior can be customized
+/// by passing an expression as the attribute argument. The expression is evaluated in the macro
+/// expansion context.
 ///
 /// ```
 /// # use laby::*;
@@ -487,6 +487,50 @@ pub use laby_macros::{
 /// test!(left = "lyba", right = "lyba");
 /// test!(left = "lyba"); // omitted; same as above
 /// ```
+///
+/// It is not possible to apply `#[default]` on generic parameters like `impl Render` because
+/// the compiler cannot infer which default implementation of [`Render`] should be used. This can
+/// be circumvented by simply defaulting to the unit type `()` implementation of [`Render`] which
+/// simply renders nothing.
+///
+/// ```
+/// # use laby::*;
+/// #[laby]
+/// fn component(#[default(())] title: impl Render) -> impl Render {
+///     article!(
+///         h1!(title),
+///     )
+/// }
+///
+/// assert_eq!(render!(component!()), "<article><h1></h1></article>");
+/// assert_eq!(render!(component!(title = a!("title"))), "<article><h1><a>title</a></h1></article>");
+/// ```
+///
+/// # `#[other]` arguments
+///
+/// By default, all arguments must be specified with their respective parameter names. A
+/// function may declare at most one parameter with this attribute, which binds all arguments
+/// without a name specified to that parameter, wrapped together using [`frag!`]. This behavior is
+/// similar to [React children][2].
+///
+/// ```
+/// # use laby::*;
+/// #[laby]
+/// fn component(#[default(())] title: impl Render, #[other] children: impl Render) -> impl Render {
+///     article!(
+///         h1!(title),
+///         main!(children),
+///     )
+/// }
+///
+/// assert_eq!(render!(component!()), "<article><h1></h1><main></main></article>");
+/// assert_eq!(render!(component!("para")), "<article><h1></h1><main>para</main></article>");
+/// assert_eq!(render!(component!(p!("para1"), p!("para2"))), "<article><h1></h1><main><p>para1</p><p>para2</p></main></article>");
+/// assert_eq!(render!(component!(title = "laby", p!("para1"), p!("para2"))), "<article><h1>laby</h1><main><p>para1</p><p>para2</p></main></article>");
+/// ```
+///
+/// This attribute implies `#[default]`. Parameters with this attribute cannot be named by
+/// arguments.
 ///
 /// # Caveats
 ///
@@ -613,6 +657,7 @@ pub use laby_macros::{
 /// `macro_rules! foo { ... }`.
 ///
 /// [1]: https://rust-lang.github.io/rfcs/1584-macros.html
+/// [2]: https://reactjs.org/docs/composition-vs-inheritance.html
 pub use laby_macros::laby;
 
 /// Wraps multiple values implementing [`Render`][2] into one.

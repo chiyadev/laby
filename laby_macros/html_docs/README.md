@@ -6,7 +6,7 @@ This directory contains the documentation for all HTML tags, which are excerpts 
 These excerpts are generated using [this script](./process.sh). The script clones the
 [MDN content repository][2] into this directory, processes the necessary files and saves the
 output in this directory. The processed files are then included by [rustdoc][3] during the
-documentation build process. The cloned repository is ignored from version control.
+documentation build process.
 
 MDN content is licensed under [CC-BY-SA 2.5][4].
 The original license text can be viewed [here](./LICENSE).

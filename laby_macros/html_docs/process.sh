@@ -1,13 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 # Processes the MDN HTML element docs for rustdoc inclusion.
-set -e
-
-# clone if not already
-if [ -d "content" ]; then
-  (cd "content" && git pull)
-else
-  git clone "https://github.com/mdn/content" content/
-fi
+set -euxo pipefail
 
 # delete existing processed files
 find * -maxdepth 0 ! -name 'README.md' ! -name 'LICENSE' ! -name 'process.sh' -type f -exec rm -f {} +
@@ -27,11 +20,12 @@ reg=$(cat <<'EOF'
 
   s/\{\{\s*(HTMLElement)\s*\(\s*['"](?<s>.+?)['"]\s*\)\s*\}\}/[`$+{s}`]($+{s}!)/gis;
 
+  # code blocks get interpreted as rust code by cargo test, so tag them with ignore
+  s/```\n(.*?)\n```/```ignore\n$1\n```/gs;
+
+  s/\{\{\s*(HTMLSidebar)\s*\}\}//gis;
   s/\{\{\s*(Deprecated_Header)\s*\}\}/# Deprecated/gis;
   s/\{\{\s*(Deprecated_inline)\s*\}\}/*(deprecated)*/gis;
-
-  # hack: truncate bdi doc using indents instead of code fence
-  s/^For example,.*?    .*//ms;
 
   s/^\n+//s;
   s/\n+$/\n/s;

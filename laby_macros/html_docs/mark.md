@@ -1,1 +1,1 @@
-The **`<mark>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element represents text which is **marked** or **highlighted** for reference or notation purposes, due to the marked passage's relevance or importance in the enclosing context.
+The **`<mark>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element represents text which is **marked** or **highlighted** for reference or notation purposes due to the marked passage's relevance in the enclosing context.

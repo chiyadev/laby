@@ -1,1 +1,1 @@
-The **`<th>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element defines a cell as header of a group of table cells. The exact nature of this group is defined by the `scope", "th` and `headers", "th` attributes.
+The **`<th>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element defines a cell as the header of a group of table cells. The exact nature of this group is defined by the [`scope`](#scope) and [`headers`](#headers) attributes.

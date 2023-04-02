@@ -1,1 +1,1 @@
-The **`<cite>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element is used to describe a reference to a cited creative work, and must include the title of that work. The reference may be in an abbreviated form according to context-appropriate conventions related to citation metadata.
+The **`<cite>`** [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) element is used to mark up the title of a cited creative work. The reference may be in an abbreviated form according to context-appropriate conventions related to citation metadata.

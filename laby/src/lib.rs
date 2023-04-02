@@ -11,13 +11,14 @@
 //!
 //! - **Simplicity**: laby has minimal dependencies, works out of the box without any
 //! configuration, and can be easily extended to add extra functionality where necessary.
-//! - **Performance**: laby generates specialized code that generate HTML. It requires no heap
-//! allocation at runtime other than the rendering buffer that the resulting HTML gets rendered to.
-//! Any operation that involves extra heap allocations is opt-in. All rendering code is statically
-//! type checked at compile time and inlined for performance.
-//! - **Familiarity**: laby provides macros that accept any valid Rust code; learning a new
-//! [DSL][1] for HTML templating is not necessary. Macros can be nested, composed, formatted by
-//! [rustfmt][2], separated into components and returned by functions just like normal Rust code.
+//! - **Performance**: laby generates specialized code that generate HTML. It generally requires no
+//! heap allocation at runtime other than the buffer that the resulting HTML gets rendered to. Any
+//! operation that involves extra heap allocations is opt-in. All rendering code is statically type
+//! checked at compile time and inlined for performance.
+//! - **Familiarity**: laby provides macros that can accept any valid Rust code and expand to
+//! regular Rust code; learning a new [DSL][1] for HTML templating is not necessary. Macros can be
+//! nested, composed, formatted by [rustfmt][2], separated into components and returned by
+//! functions just like regular Rust code.
 //!
 //! Much of laby's high-performance code was inherited from [sailfish][3], an extremely fast HTML
 //! templating engine for Rust. However, whereas sailfish processes HTML template files *with
@@ -89,10 +90,10 @@
 //! The above code uses the macros [`html!`], [`head!`], [`title!`], [`body!`] and [`p!`] to
 //! construct a basic HTML structure. Then, the [`render!`] macro is used to convert the tree into
 //! a [`String`][7] representation. The result is compared to another string which is spread over
-//! multiple lines for readability. This code compiles and runs successfully.
+//! multiple lines for readability.
 //!
-//! Notice how the children of a node are passed as normal positional arguments, while the
-//! attributes of a node are configured as assignment expressions. This is a perfectly valid Rust
+//! Notice how the children of a node are passed as regular positional arguments, while the
+//! attributes of a node are specified as assignment expressions. This is a perfectly valid Rust
 //! syntax, which means it can be formatted using [rustfmt][2].
 //!
 //! Under the hood, laby transforms the above code into code that looks something like this:
@@ -133,8 +134,8 @@
 //! # Templating
 //!
 //! laby accepts any valid expression in place of attribute names and values and child nodes, and
-//! can access variables in the local scope just like normal code. It is not limited to only string
-//! literals.
+//! can access variables in the local scope just like regular code. It is not limited to only
+//! string literals.
 //!
 //! The only requirement is for the expression to evaluate to a value that implements the
 //! [`Render`] trait. Refer to the [list of foreign impls](Render#foreign-impls) to see which types
@@ -339,8 +340,8 @@
 //!
 //! ## Naming arguments
 //!
-//! Sometimes components can get big and accept a long list of positional arguments that worsens
-//! readability. laby provides an attribute macro called [`#[laby]`][13] which allows you to call
+//! Sometimes components can get big and accept a long list of positional arguments that hurts
+//! readability. laby provides an attribute macro called [`#[laby]`][13] which lets you call
 //! arbitrary functions with explicitly named arguments and optional values, similar to HTML
 //! macros.
 //!
@@ -670,7 +671,9 @@ pub use laby_macros::laby;
 ///
 /// The following example passes multiple nodes to a function that accepts only one node, by
 /// wrapping the arguments in [`frag!`]. By using fragments, intermediary container elements like
-/// [`div`](div!) can be avoided, because they may change the semantics of the markup.
+/// [`div`](div!) or [`span`](span!), which changes the semantics of the markup, can be avoided.
+///
+/// This example passes multiple nodes to a function which takes only one value.
 ///
 /// ```
 /// # use laby::*;
@@ -686,7 +689,7 @@ pub use laby_macros::laby;
 /// assert_eq!(s, "<ul><li>one</li><li>two</li></ul>");
 /// ```
 ///
-/// This example returns multiple nodes from a function with only one return value.
+/// This example returns multiple nodes from a function which returns only one value.
 ///
 /// ```
 /// # use laby::*;
@@ -705,15 +708,16 @@ pub use laby_macros::frag;
 /// Wraps a `match` or `if` expression returning [`Render`][1] into one.
 ///
 /// This macro allows a `match` or `if` expression to return different types of [`Render`][1]
-/// implementations which would otherwise be disallowed because of mismatching types.
+/// implementations. This would otherwise be disallowed because all branches of a `match` or `if`
+/// expression must return the same type of [`Render`][1] implementation.
 ///
-/// It is named so because it uses a set of [`Option<T>`] variables and the [`frag!`][2] macro
-/// internally to render each variant.
+/// This macro was named `frag_match` because it uses a set of [`Option`] variables for each
+/// variant and the [`frag!`][2] macro for rendering.
 ///
 /// # Expansion
 ///
 /// ```ignore
-/// // frag_match!(match $expr { $pat => $expr })
+/// // frag_match!(match $expr { $pat => $expr, ... })
 /// {
 ///     let mut variant1 = None, mut variant2 = None, ..;
 ///
@@ -752,21 +756,22 @@ pub use laby_macros::frag;
 /// [3]: alloc::vec::Vec
 pub use laby_macros::frag_match;
 
-/// Wraps multiple values implementing [`Render`][1] into one, with a space delimiter.
+/// Wraps multiple values implementing [`Render`][1] into one, with whitespace as the delimiter.
 ///
 /// This macro behaves similarly to the [`frag!`] macro. The only difference is that all wrapped
-/// values will be rendered sequentially in the order of arguments, but with a single space
+/// values will be rendered sequentially in the order of arguments, but with a single whitespace
 /// character `' '` to delimit each value.
 ///
-/// It can be convenient when generating an interpolated string for the `class` attribute in a
-/// markup.
+/// It is intended to be used to generate an interpolated string for the `class` attribute in an
+/// HTML markup.
 ///
 /// [1]: laby_common::Render
 ///
 /// # Example
 ///
-/// The following example generates a class string with several values interpolated. `four` is not
-/// included because it is [`None`].
+/// The following example generates a class string with several values interpolated. Note that
+/// `four` is not included because it is [`None`], but the whitespace that delimits `four` is
+/// still rendered regardless.
 ///
 /// ```
 /// # use laby::*;

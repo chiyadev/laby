@@ -49,10 +49,10 @@ use core::{
 
 /// Buffer for rendered contents.
 ///
-/// This is a port of [sailfish][1]'s `Buffer` struct, which is quite similar to [`String`] but
-/// with some methods re-implemented for faster buffering.
+/// This is a port of [sailfish][1]'s [`Buffer`][2] struct.
 ///
 /// [1]: https://docs.rs/sailfish/
+/// [2]: https://docs.rs/sailfish/latest/sailfish/runtime/struct.Buffer.html
 ///
 /// # Example
 ///

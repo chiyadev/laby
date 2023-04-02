@@ -19,7 +19,7 @@ let n = html!(
   ),
 );
 
-let s = render!(DocType::HTML, s);
+let s = render!(DocType::HTML5, s);
 ```
 
 ```html

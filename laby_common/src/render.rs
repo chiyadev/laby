@@ -37,7 +37,7 @@ use core::num::{
 ///     fn render(self, buffer: &mut Buffer) {
 ///         buffer.push_str("<div>");
 ///         buffer.push_str("hello, ");
-///         escape(self.name, buffer); // manually escaped
+///         escape(self.name, buffer); // ensure string is escaped
 ///         buffer.push_str("</div>");
 ///     }
 /// }

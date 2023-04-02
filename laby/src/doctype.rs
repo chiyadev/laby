@@ -18,7 +18,7 @@ use laby_common::{internal::Buffer, Render};
 /// ```
 /// # use laby::*;
 /// let n = render!(
-///     DocType::HTML,
+///     DocType::HTML5,
 ///     html!(
 ///         head!(title!("laby")),
 ///         body!(),
@@ -28,14 +28,14 @@ use laby_common::{internal::Buffer, Render};
 /// assert_eq!(n, "<!DOCTYPE html><html><head><title>laby</title></head><body></body></html>");
 /// ```
 pub enum DocType {
-    /// Declaration type for HTML documents.
-    HTML,
+    /// Declaration for an HTML5 document.
+    HTML5,
 }
 
 impl Render for DocType {
     fn render(self, buffer: &mut Buffer) {
         match self {
-            DocType::HTML => {
+            DocType::HTML5 => {
                 buffer.push_str("<!DOCTYPE html>");
             }
         }

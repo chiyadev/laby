@@ -33,7 +33,7 @@ pub fn generate_component_macro(
         let PatType { ref mut attrs, .. } = unwrap_typed_arg(arg)?;
 
         pop_default_attr(attrs)?;
-        pop_other_attr(attrs)?;
+        pop_rest_attr(attrs)?;
     }
 
     if cfg!(feature = "decl_macro") {
@@ -114,11 +114,11 @@ fn pop_default_attr(attrs: &mut Vec<Attribute>) -> syn::Result<Option<TokenStrea
     Ok(None)
 }
 
-fn pop_other_attr(attrs: &mut Vec<Attribute>) -> syn::Result<Option<TokenStream>> {
+fn pop_rest_attr(attrs: &mut Vec<Attribute>) -> syn::Result<Option<TokenStream>> {
     for i in 0..attrs.len() {
         if {
             let ref attr = attrs[i];
-            attr.path.is_ident("other") && matches!(attr.style, AttrStyle::Outer)
+            attr.path.is_ident("rest") && matches!(attr.style, AttrStyle::Outer)
         } {
             let attr = attrs.remove(i);
 
@@ -167,13 +167,13 @@ pub fn generate_component_macro_call(stream: TokenStream) -> syn::Result<TokenSt
     let mut param_names = Vec::new();
 
     // children accumulation
-    struct OtherParam {
+    struct RestParam {
         ident: Ident,
         wrapper: TokenStream,
         args: Vec<Expr>,
     }
 
-    let mut other = None;
+    let mut rest = None;
 
     // parse function signature to populate above fields
     for arg in sig.inputs.iter_mut() {
@@ -186,18 +186,18 @@ pub fn generate_component_macro_call(stream: TokenStream) -> syn::Result<TokenSt
         let PatIdent { ref ident, .. } = unwrap_named_pat(pat)?;
         param_names.push(ident.clone());
 
-        match pop_other_attr(attrs)? {
-            // other param
-            Some(wrapper) => match other {
+        match pop_rest_attr(attrs)? {
+            // rest param
+            Some(wrapper) => match rest {
                 Some(_) => {
                     return Err(syn::Error::new(
                         pat.span(),
-                        "`other` attribute cannot be applied on multiple parameters",
+                        "`rest` attribute cannot be applied on multiple parameters",
                     ));
                 }
 
                 _ => {
-                    other = Some(OtherParam {
+                    rest = Some(RestParam {
                         ident: ident.clone(),
                         wrapper,
                         args: vec![],
@@ -257,9 +257,9 @@ pub fn generate_component_macro_call(stream: TokenStream) -> syn::Result<TokenSt
                 }
             }
 
-            // other param
-            expr => match other {
-                Some(OtherParam { ref mut args, .. }) => {
+            // rest param
+            expr => match rest {
+                Some(RestParam { ref mut args, .. }) => {
                     args.push(expr);
                 }
 
@@ -278,12 +278,12 @@ pub fn generate_component_macro_call(stream: TokenStream) -> syn::Result<TokenSt
 
     // map params to respective arguments
     for name in param_names {
-        // other param
-        if let Some(OtherParam { ref ident, .. }) = other {
+        // rest param
+        if let Some(RestParam { ref ident, .. }) = rest {
             if *ident == name {
-                let OtherParam { wrapper, args, .. } = unsafe {
+                let RestParam { wrapper, args, .. } = unsafe {
                     // SAFETY: we just checked above that Option is Some
-                    std::mem::replace(&mut other, None).unwrap_unchecked()
+                    std::mem::replace(&mut rest, None).unwrap_unchecked()
                 };
 
                 func_args.push(quote!(#wrapper(#(#args),*)));

@@ -125,9 +125,9 @@ fn default_args_render() {
 }
 
 #[test]
-fn other() {
+fn rest() {
     #[laby]
-    fn test(#[other] children: impl Render, x: impl Render) -> String {
+    fn test(#[rest] children: impl Render, x: impl Render) -> String {
         render!(x, ": ", children)
     }
 

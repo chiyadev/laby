@@ -33,7 +33,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! laby = "0.2"
+//! laby = "0.3"
 //! ```
 //!
 //! Additionally, you may want to import laby into your code like this:
@@ -440,7 +440,7 @@ pub use laby_macros::{
 ///
 /// This attribute macro generates a *function-like macro*, with the same visibility and path as
 /// the target function, which allows callers to call that function with the arguments specified in
-/// any arbitrary order using *assignment-like expressions* (`$name = $value`).
+/// any arbitrary order using *assignment-like expressions* (`name = value`).
 ///
 /// Although this attribute is provided for use in laby components, its implementation is not
 /// specific to laby. It may be applied to any function, albeit with some caveats documented below.
@@ -449,7 +449,8 @@ pub use laby_macros::{
 /// # `#[default]` arguments
 ///
 /// By default, all arguments must be specified explicitly, even [`Option<T>`] types. Omittable
-/// arguments are opt-in. To mark a parameter as omittable, use the `#[default]` attribute.
+/// arguments are opt-in. To mark a parameter as omittable, prepend the `#[default]` attribute to
+/// the parameter.
 ///
 /// ```
 /// # use laby::*;
@@ -465,29 +466,29 @@ pub use laby_macros::{
 ///
 /// foo!(x = None); // required
 /// bar!(x = None); // omittable
-/// bar!(); // omitted; same as above
+/// bar!(); // omitted; equivalent to the above line
 /// ```
 ///
 /// This attribute by default defaults to [`Default::default()`]. This behavior can be customized
-/// by passing an expression as the attribute argument. The expression is evaluated in the macro
-/// expansion context.
+/// by passing a default expression as the attribute argument. The expression is evaluated in the
+/// macro expansion context.
 ///
 /// ```
 /// # use laby::*;
 /// #[laby]
-/// fn test(left: &str, #[default("lyba")] right: &str) {
+/// fn test(left: &str, #[default("b")] right: &str) {
 ///     assert_eq!(left, right);
 /// }
 ///
-/// test!(left = "laby", right = "laby");
-/// test!(left = "lyba", right = "lyba");
-/// test!(left = "lyba"); // omitted; same as above
+/// test!(left = "a", right = "a");
+/// test!(left = "b", right = "b");
+/// test!(left = "b"); // omitted; equivalent to the above line
 /// ```
 ///
 /// It is not possible to apply `#[default]` on generic parameters like `impl Render` because the
 /// compiler cannot infer which default implementation of [`Render`] should be used. This can be
-/// circumvented by simply defaulting to the unit type `()` implementation of [`Render`] which
-/// simply renders nothing.
+/// circumvented by using the unit type `()` implementation of [`Render`] as the default
+/// expression, which simply renders nothing.
 ///
 /// ```
 /// # use laby::*;
@@ -502,17 +503,17 @@ pub use laby_macros::{
 /// assert_eq!(render!(component!(title = a!("title"))), "<article><h1><a>title</a></h1></article>");
 /// ```
 ///
-/// # `#[other]` arguments
+/// # `#[rest]` arguments
 ///
-/// By default, all arguments must be specified with their respective parameter names. A function
-/// may declare at most one parameter with this attribute, which binds all arguments without a name
-/// specified to that parameter, wrapped together using [`frag!`]. This behavior is similar to
+/// By default, all arguments must be specified with their respective parameter name. A function
+/// may declare at most one parameter with this attribute, which binds all arguments without a
+/// specified name to that parameter, wrapped together using [`frag!`]. This behavior is similar to
 /// [React children][2].
 ///
 /// ```
 /// # use laby::*;
 /// #[laby]
-/// fn component(#[default(())] title: impl Render, #[other] children: impl Render) -> impl Render {
+/// fn component(#[default(())] title: impl Render, #[rest] children: impl Render) -> impl Render {
 ///     article!(
 ///         h1!(title),
 ///         main!(children),
@@ -524,9 +525,6 @@ pub use laby_macros::{
 /// assert_eq!(render!(component!(p!("para1"), p!("para2"))), "<article><h1></h1><main><p>para1</p><p>para2</p></main></article>");
 /// assert_eq!(render!(component!(title = "laby", p!("para1"), p!("para2"))), "<article><h1>laby</h1><main><p>para1</p><p>para2</p></main></article>");
 /// ```
-///
-/// This attribute implies `#[default]`. Parameters with this attribute cannot be named by
-/// arguments.
 ///
 /// # Caveats
 ///
@@ -543,6 +541,7 @@ pub use laby_macros::{
 /// fn good(x: &Foo) {}
 ///
 /// impl Foo {
+///     // this will not compile:
 ///     #[laby]
 ///     fn bad(&self) {}
 /// }
@@ -550,11 +549,11 @@ pub use laby_macros::{
 ///
 /// ## Function should not be named after an HTML tag
 ///
-/// When a markup macro is invoked within another containing markup macro invocation, laby
-/// recognizes this pattern internally and inlines that nested invocation into the parent
-/// invocation as an optimization, regardless of whether that macro is indeed a markup macro or
-/// another macro with a conflicting name that actually does completely different things. As a
-/// workaround, you may alias the function with a different name.
+/// When a markup macro named after an HTML tag is invoked within another markup macro, laby
+/// recognizes this pattern and inlines that nested HTML macro into the parent macro as an
+/// optimization, regardless of whether that HTML macro is indeed an HTML macro or another macro
+/// with a conflicting name that actually does something completely different. As a workaround, you
+/// may alias the function with a different name.
 ///
 /// ```compile_fail
 /// # use laby::*;
@@ -571,8 +570,9 @@ pub use laby_macros::{
 /// }
 ///
 /// fn bad() {
+///     // refers to `laby::article`, not the `article` macro declared above!
 ///     let s = render!(div!(article!()));
-///     assert_eq!(s, "<div>foo</div>"); // <div><article></article></div>
+///     assert_eq!(s, "<div><article></article></div>");
 /// }
 /// # good(); bad();
 /// ```
@@ -599,7 +599,7 @@ pub use laby_macros::{
 /// }
 ///
 /// fn bad() {
-///     foo::bar!(); // no function `bar` in scope
+///     foo::bar!(); // no function named `bar` in scope
 /// }
 /// # good(); bad();
 /// ```
@@ -609,7 +609,6 @@ pub use laby_macros::{
 /// The generated macro is defined using `macro_rules!` which prevents macros from being exported
 /// in modules other than the crate root. Due to this limitation, the maximum visibility of the
 /// generated macro is restricted to `pub(crate)` even if the target function is `pub`.
-/// `#[macro_export]` is not used.
 ///
 /// This caveat can be circumvented by enabling the `decl_macro` feature.
 ///
@@ -634,7 +633,7 @@ pub use laby_macros::{
 /// # Macros 2.0 support
 ///
 /// laby comes with support for the experimental [Declarative Macros 2.0][1] compiler feature which
-/// can be enabled using the feature flag `decl_macro`. This requires a nightly compiler.
+/// can be enabled using the feature flag `decl_macro`. This requires a nightly toolchain.
 ///
 /// To enable this feature, add laby's feature flag in your `Cargo.toml`,
 ///

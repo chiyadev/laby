@@ -12,5 +12,5 @@ categories = ["template-engine"]
 decl_macro = ["laby_macros/decl_macro"]
 
 [dependencies]
-laby_common = { path = "../laby_common", version = "0.1.2" }
-laby_macros = { path = "../laby_macros", version = "0.1.4" }
+laby_common = { path = "../laby_common", version = "0.1" }
+laby_macros = { path = "../laby_macros", version = "0.1" }

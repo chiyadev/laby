@@ -14,7 +14,7 @@ proc-macro = true
 decl_macro = []
 
 [dependencies]
-laby_common = { path = "../laby_common", version = "0.1.2" }
+laby_common = { path = "../laby_common", version = "0.1" }
 syn = { version = "1", features = ["full"] }
 proc-macro2 = "1"
 quote = "1"

@@ -6,9 +6,9 @@
 //
 //   https://opensource.org/licenses/MIT
 //
-// This is an amalgamation of files for SIMD-optimized HTML escaping code from sailfish.
-// References to std were replaced with alloc and core. Support for Miri was removed.
-// Additional documentation were added. The original source code can be found at:
+// This is an amalgamation of files for SIMD-optimized HTML escaping code ported from sailfish.
+// References to std were replaced with alloc and core. Support for Miri was removed. Additional
+// documentation were added. The original source code can be found at:
 //
 //   https://github.com/Kogia-sima/sailfish/blob/master/sailfish/src/runtime/escape
 //
@@ -51,28 +51,25 @@ const ESCAPED_LEN: usize = 5;
 
 use super::buffer::Buffer;
 use alloc::string::String;
-use core::{
-    ptr,
-    sync::atomic::{AtomicPtr, Ordering},
-};
+use core::ptr;
 use ptr::copy_nonoverlapping as memcpy_16;
 
 /// Takes a string slice [`&str`] and writes the escaped form into the given [`Buffer`].
 ///
-/// This is a port of [sailfish][5]'s `escape_to_buf` function
-/// which is an [x86][4] [SIMD-optimized][1] HTML escaping function.
-/// The characters `&"'<>` are replaced with the respective HTML entities.
+/// This is a port of [sailfish][5]'s `escape_to_buf` function which is an [x86][4]
+/// [SIMD-optimized][1] HTML escaping function. The characters `&"'<>` are replaced with the
+/// respective HTML entities.
 ///
-/// If the platform supports [AVX2][2] or [SSE2][3], this function will delegate
-/// to the fastest SIMD-optimized implementation automatically. Otherwise, it will gracefully
-/// degrade to a fallback scalar implementation. This feature detection is performed at runtime
-/// and is not determined by the target platform at compile time.
+/// If the platform supports [AVX2][2] or [SSE2][3], this function will delegate to the fastest
+/// SIMD-optimized implementation automatically. Otherwise, it will gracefully degrade to a
+/// fallback scalar implementation. This feature detection is performed at runtime and is not
+/// determined by the target platform at compile time.
 ///
-/// Non-[x86][4] platforms will always use the fallback scalar implementation regardless of
-/// SIMD support.
+/// Non-[x86][4] platforms will always use the fallback scalar implementation regardless of SIMD
+/// support.
 ///
-/// To escape a string as a [`String`] instead of [`Buffer`] conveniently,
-/// see [`escape_str`] function.
+/// To escape a string as a [`String`] instead of [`Buffer`] conveniently, see [`escape_str`]
+/// function.
 ///
 /// [1]: https://en.wikipedia.org/wiki/SIMD
 /// [2]: https://en.wikipedia.org/wiki/Advanced_Vector_Extensions
@@ -92,8 +89,14 @@ use ptr::copy_nonoverlapping as memcpy_16;
 ///
 /// assert_eq!(buffer.into_string(), "a &lt; b");
 /// ```
-#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 pub fn escape(feed: &str, buf: &mut Buffer) {
+    escape_impl(feed, buf)
+}
+
+#[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
+fn escape_impl(feed: &str, buf: &mut Buffer) {
+    use sync::atomic::{AtomicPtr, Ordering};
+
     type FnRaw = *mut ();
     static FN: AtomicPtr<()> = AtomicPtr::new(detect as FnRaw);
 
@@ -129,7 +132,7 @@ pub fn escape(feed: &str, buf: &mut Buffer) {
 }
 
 #[cfg(not(any(target_arch = "x86", target_arch = "x86_64")))]
-pub fn escape(feed: &str, buf: &mut Buffer) {
+fn escape_impl(feed: &str, buf: &mut Buffer) {
     unsafe {
         if feed.len() < 16 {
             buf.reserve_small(feed.len() * 6);
@@ -143,8 +146,8 @@ pub fn escape(feed: &str, buf: &mut Buffer) {
 
 /// Takes a string slice [`&str`] and returns the escaped [`String`].
 ///
-/// This is equivalent to constructing a new [`Buffer`], calling [`escape`] into that buffer
-/// and then returning [`Buffer::into_string()`].
+/// This is equivalent to constructing a new [`Buffer`], calling [`escape`] into that buffer and
+/// then returning [`Buffer::into_string()`].
 ///
 /// # Example
 ///
@@ -237,7 +240,7 @@ mod naive {
     use core::{ptr, slice};
 
     #[inline]
-    pub(super) unsafe fn escape(
+    pub unsafe fn escape(
         buffer: &mut Buffer,
         mut start_ptr: *const u8,
         ptr: *const u8,
@@ -252,7 +255,7 @@ mod naive {
     }
 
     #[inline]
-    pub(super) unsafe fn proceed(
+    pub unsafe fn proceed(
         buffer: &mut Buffer,
         mut start_ptr: *const u8,
         mut ptr: *const u8,
@@ -280,7 +283,7 @@ mod naive {
         start_ptr
     }
 
-    pub(super) unsafe fn escape_small(feed: &str, mut buf: *mut u8) -> usize {
+    pub unsafe fn escape_small(feed: &str, mut buf: *mut u8) -> usize {
         let mut start_ptr = feed.as_ptr();
         let mut ptr = start_ptr;
         let end_ptr = start_ptr.add(feed.len());
@@ -321,7 +324,7 @@ mod naive {
 
     #[cfg(any(target_arch = "x86_64", target_arch = "x86", target_arch = "aarch64"))]
     #[inline]
-    pub(super) unsafe fn push_escaped_str(value: &str, buffer: &mut Buffer) {
+    pub unsafe fn push_escaped_str(value: &str, buffer: &mut Buffer) {
         buffer.reserve_small(value.len());
 
         let src = value.as_ptr();
@@ -339,7 +342,7 @@ mod naive {
 
     #[cfg(not(any(target_arch = "x86_64", target_arch = "x86", target_arch = "aarch64")))]
     #[inline]
-    pub(super) unsafe fn push_escaped_str(value: &str, buffer: &mut Buffer) {
+    pub unsafe fn push_escaped_str(value: &str, buffer: &mut Buffer) {
         buffer.push_str(value);
     }
 }

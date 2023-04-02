@@ -23,7 +23,7 @@ let s = render!(DocType::HTML5, n);
 ```
 
 ```html
-<!DOCTYPE html><html><head>laby</head><body><p>Hello, world!</p></body></html>
+<!DOCTYPE html><html><head><title>laby</title></head><body><p>Hello, world!</p></body></html>
 ```
 
 [1]: https://crates.io/crates/laby

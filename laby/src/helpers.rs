@@ -99,8 +99,8 @@ use alloc::string::String;
 /// assert_eq!(s, "<html><head><title>laby</title></head><body><p>paragraph</p></body></html>");
 /// ```
 ///
-/// The [`render!`] macro can render any value that implements the [`Render`] trait, which is not
-/// limited only to nodes constructed by markup macros.  See the [list of foreign
+/// The [`render!`](crate::render) macro can render any value that implements the [`Render`] trait,
+/// which is not limited only to nodes constructed by markup macros.  See the [list of foreign
 /// impls](Render#foreign-impls) on the [`Render`] trait to see which types are supported.
 ///
 /// ```
@@ -110,7 +110,7 @@ use alloc::string::String;
 /// ```
 ///
 /// All strings are escaped by default when rendered. This behavior can be opted out of by using
-/// the [`raw!`] macro.
+/// the [`raw!`](crate::raw) macro.
 ///
 /// ```
 /// # use laby::*;
@@ -121,8 +121,9 @@ use alloc::string::String;
 /// assert_eq!(raw, "a < b");
 /// ```
 ///
-/// This example renders multiple nodes using the [`render!`] macro. It is equivalent to passing a
-/// single argument using the [`frag!`][crate::frag] macro that wraps the values together.
+/// This example renders multiple nodes using the [`render!`](crate::render) macro. It is
+/// equivalent to passing a single argument using the [`frag!`][crate::frag] macro that wraps the
+/// values together.
 ///
 /// ```
 /// # use laby::*;
@@ -157,7 +158,7 @@ macro_rules! render {
 /// This renderer is lazy; the iterator wrapped by this object will only be iterated when
 /// [`render`][Render::render] is called on this object, not when this object is constructed.
 ///
-/// Consider using the [`iter!`] macro instead of constructing this type manually.
+/// Consider using the [`iter!`](crate::iter) macro instead of constructing this type manually.
 pub struct RenderIterator<R: Render, I: Iterator<Item = R>>(
     /// The iterator from which items are rendered.
     pub I,
@@ -187,7 +188,7 @@ impl<R: Render, I: Iterator<Item = R>> Render for RenderIterator<R, I> {
 /// This renderer is lazy; the iterator wrapped by this object will only be iterated when
 /// [`render`][Render::render] is called on this object, not when this object is constructed.
 ///
-/// Consider using the [`iter!`] macro instead of constructing this type manually.
+/// Consider using the [`iter!`](crate::iter) macro instead of constructing this type manually.
 pub struct RenderIteratorDelimited<R: Render, I: Iterator<Item = R>, S: AsRef<str>>(
     /// The iterator from which items are rendered.
     pub I,
@@ -225,7 +226,7 @@ impl<R: Render, I: Iterator<Item = R>, S: AsRef<str>> Render for RenderIteratorD
 /// wrapped in [`RenderIteratorDelimited`].
 ///
 /// If you are rendering an iterator with the newline `"\n"` string as the delimiter, consider
-/// using the [`iter_lines!`] macro instead.
+/// using the [`iter_lines!`](crate::iter_lines) macro instead.
 ///
 /// # Expansion
 ///
@@ -286,9 +287,9 @@ macro_rules! iter {
     };
 }
 
-/// Convenience macro for [`iter!`] with the newline delimiter.
+/// Convenience macro for [`iter!`](crate::iter) with the newline delimiter.
 ///
-/// This macro is equivalent to the [`iter!`] macro with the newline `"\n"` delimiter.
+/// This macro is equivalent to the [`iter!`](crate::iter) macro with the newline `"\n"` delimiter.
 ///
 /// # Expansion
 ///
@@ -320,7 +321,7 @@ macro_rules! iter_lines {
 ///
 /// When rendered, the value will be written to the output buffer directly without being escaped.
 ///
-/// Consider using the [`raw!`] macro instead of constructing this type manually.
+/// Consider using the [`raw!`](crate::raw) macro instead of constructing this type manually.
 ///
 /// # Example
 ///
@@ -416,7 +417,7 @@ macro_rules! raw {
 /// implementing the [`Render`] trait directly on the wrapped type should be preferred over using
 /// this wrapper.
 ///
-/// Consider using the [`disp!`] macro instead of constructing this type manually.
+/// Consider using the [`disp!`](crate::disp) macro instead of constructing this type manually.
 pub struct RenderDisplay<D: Display>(
     /// The value to render.
     pub D,
@@ -451,7 +452,8 @@ impl<D: Display> Render for RenderDisplay<D> {
 ///
 /// # Example
 ///
-/// This example renders a value that implements [`Display`] by wrapping it using [`disp!`].
+/// This example renders a value that implements [`Display`] by wrapping it using
+/// [`disp!`](crate::disp).
 ///
 /// ```
 /// # use laby::*;

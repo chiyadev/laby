@@ -3,7 +3,7 @@
 [![Crate](https://img.shields.io/crates/v/laby)][1]
 [![License](https://img.shields.io/crates/l/laby)](LICENSE)
 [![Docs](https://img.shields.io/docsrs/laby)][2]
-[![Maintainer](https://img.shields.io/badge/maintainer-phosphene47-pink)][3]
+[![Maintainer](https://img.shields.io/badge/maintainer-luaneko-pink)][3]
 [![Issues](https://img.shields.io/github/issues/chiyadev/laby.svg)][4]
 [![Contributors](https://img.shields.io/github/contributors/chiyadev/laby.svg)][5]
 
@@ -28,6 +28,6 @@ let s = render!(DocType::HTML, s);
 
 [1]: https://crates.io/crates/laby
 [2]: https://docs.rs/laby
-[3]: https://github.com/phosphene47
+[3]: https://github.com/luaneko
 [4]: https://GitHub.com/chiyadev/laby/issues
 [5]: https://github.com/chiyadev/laby/graphs/contributors

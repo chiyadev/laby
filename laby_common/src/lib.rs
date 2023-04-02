@@ -12,8 +12,8 @@
 //! operations, the [`escape`](internal::escape) function that escapes strings for HTML inclusion,
 //! and the [`Buffer`](internal::Buffer) type that provides the rendering output buffer.
 //!
-//! This crate is re-exported by crate `laby`. If you are using laby, you should not depend
-//! on this crate directly.
+//! This crate is re-exported by crate `laby`. If you are using laby, you should not depend on this
+//! crate directly.
 #![no_std]
 #![deny(missing_docs)]
 extern crate alloc;

@@ -8,8 +8,8 @@
 //
 //! Contains macros that generate specialized HTML rendering code.
 //!
-//! This crate is re-exported by crate `laby`. If you are using laby, you should not depend
-//! on this crate directly.
+//! This crate is re-exported by crate `laby`. If you are using laby, you should not depend on this
+//! crate directly.
 extern crate proc_macro;
 
 use component::{generate_component_macro, generate_component_macro_call};

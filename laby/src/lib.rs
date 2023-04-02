@@ -6,27 +6,26 @@
 //
 //   https://opensource.org/licenses/MIT
 //
-//! laby is a small *macro* library for writing fast HTML templates in Rust.
-//! It focuses on three things:
+//! laby is a small *macro* library for writing fast HTML templates in Rust. It focuses on three
+//! things:
 //!
 //! - **Simplicity**: laby has minimal dependencies, works out of the box without any
 //! configuration, and can be easily extended to add extra functionality where necessary.
-//! - **Performance**: laby generates specialized code that generate HTML. It requires no
-//! heap allocation at runtime other than the rendering buffer that the resulting HTML gets
-//! rendered to. Any operation that involves extra heap allocations is opt-in.
-//! All rendering code is statically type checked at compile time and inlined for performance.
-//! - **Familiarity**: laby provides macros that accept any valid Rust code;
-//! learning a new [DSL][1] for HTML templating is not necessary. Macros can be nested, composed,
-//! formatted by [rustfmt][2], separated into components and returned by functions just like
-//! normal Rust code.
+//! - **Performance**: laby generates specialized code that generate HTML. It requires no heap
+//! allocation at runtime other than the rendering buffer that the resulting HTML gets rendered to.
+//! Any operation that involves extra heap allocations is opt-in. All rendering code is statically
+//! type checked at compile time and inlined for performance.
+//! - **Familiarity**: laby provides macros that accept any valid Rust code; learning a new
+//! [DSL][1] for HTML templating is not necessary. Macros can be nested, composed, formatted by
+//! [rustfmt][2], separated into components and returned by functions just like normal Rust code.
 //!
-//! Much of laby's high-performance code was inherited from [sailfish][3], an extremely fast
-//! HTML templating engine for Rust. However, whereas sailfish processes HTML template files
-//! *with special syntax*, laby provides macros that are embedded *into your code directly*.
-//! Which library to adopt is up to your coding style and personal preference.
+//! Much of laby's high-performance code was inherited from [sailfish][3], an extremely fast HTML
+//! templating engine for Rust. However, whereas sailfish processes HTML template files *with
+//! special syntax*, laby provides macros that are embedded *into your code directly*. Which
+//! library to adopt is up to your coding style and personal preference.
 //!
-//! laby targets *Rust stable* and supports embedded environments with [no_std][4].
-//! No configuration is required.
+//! laby targets *Rust stable* and supports embedded environments with [no_std][4]. No
+//! configuration is required.
 //!
 //! # Installation
 //!
@@ -43,20 +42,19 @@
 //! use laby::*;
 //! ```
 //!
-//! This is purely for convenience because laby exports a large amount of macros, each of
-//! which represent an [HTML tag][5]. Of course, it is possible to import only the macros
-//! you use individually. The rest of this guide assumes that you have imported the necessary
-//! macros already.
+//! This is purely for convenience because laby exports a large amount of macros, each of which
+//! represent an [HTML tag][5]. Of course, it is possible to import only the macros you use
+//! individually. The rest of this guide assumes that you have imported the necessary macros
+//! already.
 //!
 //! laby does not provide integration support for popular web frameworks. It returns a plain old
-//! [`String`][7] as the rendered result, so you are encouraged to write your own macro that
-//! writes that [`String`][7] to the response stream. Most web frameworks can do this
-//! out of the box.
+//! [`String`][7] as the rendered result, so you are encouraged to write your own macro that writes
+//! that [`String`][7] to the response stream. Most web frameworks can do this out of the box.
 //!
 //! # Basics
 //!
-//! laby provides procedural macros that generate specialized Rust code at compile time,
-//! which in turn generate HTML code when rendered at runtime. In order to use laby effectively,
+//! laby provides procedural macros that generate specialized Rust code at compile time, which in
+//! turn generate HTML code when rendered at runtime. In order to use laby effectively,
 //! understanding how it transforms your code is necessary. Consider the following example.
 //!
 //! ```
@@ -90,12 +88,12 @@
 //!
 //! The above code uses the macros [`html!`], [`head!`], [`title!`], [`body!`] and [`p!`] to
 //! construct a basic HTML structure. Then, the [`render!`] macro is used to convert the tree into
-//! a [`String`][7] representation. The result is compared to another string which is spread
-//! over multiple lines for readability. This code compiles and runs successfully.
+//! a [`String`][7] representation. The result is compared to another string which is spread over
+//! multiple lines for readability. This code compiles and runs successfully.
 //!
-//! Notice how the children of a node are passed as normal positional arguments,
-//! while the attributes of a node are configured as assignment expressions. This is a perfectly
-//! valid Rust syntax, which means it can be formatted using [rustfmt][2].
+//! Notice how the children of a node are passed as normal positional arguments, while the
+//! attributes of a node are configured as assignment expressions. This is a perfectly valid Rust
+//! syntax, which means it can be formatted using [rustfmt][2].
 //!
 //! Under the hood, laby transforms the above code into code that looks something like this:
 //!
@@ -116,9 +114,9 @@
 //! // assert_eq!(s, ...);
 //! ```
 //!
-//! This is, in essence, all that laby macros do; they simply declare a new specialized struct
-//! for a tree of nodes, implement the [`Render`] trait for that struct, construct that struct,
-//! and return the constructed value.
+//! This is, in essence, all that laby macros do; they simply declare a new specialized struct for
+//! a tree of nodes, implement the [`Render`] trait for that struct, construct that struct, and
+//! return the constructed value.
 //!
 //! When this code is compiled for release, all that wrapper code is stripped away and the
 //! rendering code is inlined, leaving something like this for execution:
@@ -134,15 +132,14 @@
 //!
 //! # Templating
 //!
-//! laby accepts any valid expression in place of attribute names and values and child nodes,
-//! and can access variables in the local scope just like normal code. It is not limited to only
-//! string literals.
+//! laby accepts any valid expression in place of attribute names and values and child nodes, and
+//! can access variables in the local scope just like normal code. It is not limited to only string
+//! literals.
 //!
-//! The only requirement is for the expression to evaluate to a value that
-//! implements the [`Render`] trait. Refer to the [list of foreign impls](Render#foreign-impls)
-//! to see which types implement this trait out of the box. The evaluated value is stored in the
-//! specialized struct and rendered when the [`render!`] macro is called.
-//! Consider the following example.
+//! The only requirement is for the expression to evaluate to a value that implements the
+//! [`Render`] trait. Refer to the [list of foreign impls](Render#foreign-impls) to see which types
+//! implement this trait out of the box. The evaluated value is stored in the specialized struct
+//! and rendered when the [`render!`] macro is called. Consider the following example.
 //!
 //! ```
 //! # use laby::*;
@@ -182,11 +179,11 @@
 //! evaluated.
 //! - `<p>` node: a simple local variable expression is evaluated.
 //!
-//! Note, that these expressions are evaluated where the node is *constructed*
-//! (i.e. `let n = ...`), not where the [`render!`] macro is called.
+//! Note, that these expressions are evaluated where the node is *constructed* (i.e. `let n =
+//! ...`), not where the [`render!`] macro is called.
 //!
-//! Additionally, the apostrophes in the article contents are escaped with the HTML entity
-//! `&#39;`. laby escapes all templated expressions by default unless the [`raw!`] macro is used.
+//! Additionally, the apostrophes in the article contents are escaped with the HTML entity `&#39;`.
+//! laby escapes all templated expressions by default unless the [`raw!`] macro is used.
 //!
 //! Under the hood, laby transforms the above code into code that looks something like this:
 //!
@@ -227,26 +224,26 @@
 //! ```
 //!
 //! Notice how the fields of the generated specialized struct are generic over the templated
-//! expressions. When that struct is constructed (i.e. `_article { ... }`), the compiler is able
-//! to infer the generic type arguments from the field assignments and monomorphize the struct.
-//! Iff all field expressions evaluate to a value that implements the [`Render`] trait,
-//! then that trait will also be implemented for the generated struct, allowing for it to be
-//! rendered by [`render!`].
+//! expressions. When that struct is constructed (i.e. `_article { ... }`), the compiler is able to
+//! infer the generic type arguments from the field assignments and monomorphize the struct. Iff
+//! all field expressions evaluate to a value that implements the [`Render`] trait, then that trait
+//! will also be implemented for the generated struct, allowing for it to be rendered by
+//! [`render!`].
 //!
 //! # Componentization
 //!
 //! Writing a large template for rendering an entire HTML document quickly becomes unwieldy and
 //! unmaintainable, so it is often necessary to break up the document into several smaller
-//! components. There are two popular techniques around this problem: *include* and *inherit*.
-//! laby supports both patterns, using the language features provided by Rust.
+//! components. There are two popular techniques around this problem: *include* and *inherit*. laby
+//! supports both patterns, using the language features provided by Rust.
 //!
 //! In practice, these patterns are often mixed and matched together to form a complete and
 //! coherent document. Examples of both approaches are explored below.
 //!
 //! #### Template inheritance
 //!
-//! This is a [top-down approach][6] that breaks down a large document into small components.
-//! This leads to a consistent but rigid structure that is difficult to extend or change easily.
+//! This is a [top-down approach][6] that breaks down a large document into small components. This
+//! leads to a consistent but rigid structure that is difficult to extend or change easily.
 //!
 //! ```
 //! # use laby::*;
@@ -347,8 +344,8 @@
 //! arbitrary functions with explicitly named arguments and optional values, similar to HTML
 //! macros.
 //!
-//! To enable support, simply prepend the attribute before the component function and call it
-//! using the generated macro.
+//! To enable support, simply prepend the attribute before the component function and call it using
+//! the generated macro.
 //!
 //! ```
 //! # use laby::*;
@@ -389,17 +386,16 @@
 //! 2. Implement the [`Render`] trait for that struct.
 //! 3. Provide a simple, short macro that constructs that struct conveniently.
 //!
-//! In fact, the macros [`iter!`], [`raw!`] and [`disp!`] are implemented in this way.
-//! They are not magic; they are simply extensions of laby's core rendering system. You can even
-//! ignore laby's HTML macros and write your own transformations to implement the
-//! [`Render`] trait. ~~(But why would you?)~~
+//! In fact, the macros [`iter!`], [`raw!`] and [`disp!`] are implemented in this way. They are not
+//! magic; they are simply extensions of laby's core rendering system. You can even ignore laby's
+//! HTML macros and write your own transformations to implement the [`Render`] trait.
 //!
 //! # License
 //!
-//! laby is written by [chiya.dev][0], licensed under the [MIT License][9].
-//! Portions of code were taken from [sailfish][3] which is written by [Ryohei Machida][10],
-//! also licensed under the [MIT License][8]. Documentation for HTML tags were taken
-//! from [MDN][11], licensed under [CC-BY-SA 2.5][12].
+//! laby is written by [chiya.dev][0], licensed under the [MIT License][9]. Portions of code were
+//! taken from [sailfish][3] which is written by [Ryohei Machida][10], also licensed under the [MIT
+//! License][8]. Documentation for HTML tags were taken from [MDN][11], licensed under [CC-BY-SA
+//! 2.5][12].
 //!
 //! [0]: https://chiya.dev/
 //! [1]: https://en.wikipedia.org/wiki/Domain-specific_language
@@ -443,8 +439,8 @@ pub use laby_macros::{
 /// stating the arguments with parameter names can improve readability.
 ///
 /// This attribute macro generates a *function-like macro*, with the same visibility and path as
-/// the target function, which allows callers to call that function with the arguments specified
-/// in any arbitrary order using *assignment-like expressions* (`$name = $value`).
+/// the target function, which allows callers to call that function with the arguments specified in
+/// any arbitrary order using *assignment-like expressions* (`$name = $value`).
 ///
 /// Although this attribute is provided for use in laby components, its implementation is not
 /// specific to laby. It may be applied to any function, albeit with some caveats documented below.
@@ -488,9 +484,9 @@ pub use laby_macros::{
 /// test!(left = "lyba"); // omitted; same as above
 /// ```
 ///
-/// It is not possible to apply `#[default]` on generic parameters like `impl Render` because
-/// the compiler cannot infer which default implementation of [`Render`] should be used. This can
-/// be circumvented by simply defaulting to the unit type `()` implementation of [`Render`] which
+/// It is not possible to apply `#[default]` on generic parameters like `impl Render` because the
+/// compiler cannot infer which default implementation of [`Render`] should be used. This can be
+/// circumvented by simply defaulting to the unit type `()` implementation of [`Render`] which
 /// simply renders nothing.
 ///
 /// ```
@@ -508,10 +504,10 @@ pub use laby_macros::{
 ///
 /// # `#[other]` arguments
 ///
-/// By default, all arguments must be specified with their respective parameter names. A
-/// function may declare at most one parameter with this attribute, which binds all arguments
-/// without a name specified to that parameter, wrapped together using [`frag!`]. This behavior is
-/// similar to [React children][2].
+/// By default, all arguments must be specified with their respective parameter names. A function
+/// may declare at most one parameter with this attribute, which binds all arguments without a name
+/// specified to that parameter, wrapped together using [`frag!`]. This behavior is similar to
+/// [React children][2].
 ///
 /// ```
 /// # use laby::*;
@@ -637,8 +633,8 @@ pub use laby_macros::{
 ///
 /// # Macros 2.0 support
 ///
-/// laby comes with support for the experimental [Declarative Macros 2.0][1] compiler feature
-/// which can be enabled using the feature flag `decl_macro`. This requires a nightly compiler.
+/// laby comes with support for the experimental [Declarative Macros 2.0][1] compiler feature which
+/// can be enabled using the feature flag `decl_macro`. This requires a nightly compiler.
 ///
 /// To enable this feature, add laby's feature flag in your `Cargo.toml`,
 ///
@@ -653,8 +649,8 @@ pub use laby_macros::{
 /// #![feature(decl_macro)]
 /// ```
 ///
-/// The generated macros will now use the new `macro foo { ... }` syntax instead of
-/// `macro_rules! foo { ... }`.
+/// The generated macros will now use the new `macro foo { ... }` syntax instead of `macro_rules!
+/// foo { ... }`.
 ///
 /// [1]: https://rust-lang.github.io/rfcs/1584-macros.html
 /// [2]: https://reactjs.org/docs/composition-vs-inheritance.html
@@ -662,22 +658,20 @@ pub use laby_macros::laby;
 
 /// Wraps multiple values implementing [`Render`][2] into one.
 ///
-/// This macro is similar to [React fragments][1] which wrap multiple nodes into one.
-/// It is useful when passing multiple values to a function that accepts only one value,
-/// or when returning multiple values as one return value.
+/// This macro is similar to [React fragments][1] which wrap multiple nodes into one. It is useful
+/// when passing multiple values to a function that accepts only one value, or when returning
+/// multiple values as one return value.
 ///
-/// All wrapped values will be rendered sequentially in the order of arguments without
-/// delimiters.
+/// All wrapped values will be rendered sequentially in the order of arguments without delimiters.
 ///
 /// [1]: https://reactjs.org/docs/fragments.html
 /// [2]: laby_common::Render
 ///
 /// # Example
 ///
-/// The following example passes multiple nodes to a function that accepts only one node,
-/// by wrapping the arguments in [`frag!`]. By using fragments, intermediary container
-/// elements like [`div`](div!) can be avoided, because they may change the semantics
-/// of the markup.
+/// The following example passes multiple nodes to a function that accepts only one node, by
+/// wrapping the arguments in [`frag!`]. By using fragments, intermediary container elements like
+/// [`div`](div!) can be avoided, because they may change the semantics of the markup.
 ///
 /// ```
 /// # use laby::*;
@@ -761,19 +755,19 @@ pub use laby_macros::frag_match;
 
 /// Wraps multiple values implementing [`Render`][1] into one, with a space delimiter.
 ///
-/// This macro behaves similarly to the [`frag!`] macro. The only difference is that all
-/// wrapped values will be rendered sequentially in the order of arguments,
-/// but with a single space character `' '` to delimit each value.
+/// This macro behaves similarly to the [`frag!`] macro. The only difference is that all wrapped
+/// values will be rendered sequentially in the order of arguments, but with a single space
+/// character `' '` to delimit each value.
 ///
-/// It can be convenient when generating an interpolated string for the `class` attribute
-/// in a markup.
+/// It can be convenient when generating an interpolated string for the `class` attribute in a
+/// markup.
 ///
 /// [1]: laby_common::Render
 ///
 /// # Example
 ///
-/// The following example generates a class string with several values interpolated.
-/// `four` is not included because it is [`None`].
+/// The following example generates a class string with several values interpolated. `four` is not
+/// included because it is [`None`].
 ///
 /// ```
 /// # use laby::*;

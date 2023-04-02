@@ -20,8 +20,8 @@ use core::num::{
 ///
 /// # Example
 ///
-/// The following example shows how this trait can be implemented. This is a low-level trait,
-/// so any data written to the output buffer is [not escaped](escape) by default.
+/// The following example shows how this trait can be implemented. This is a low-level trait, so
+/// any data written to the output buffer is [not escaped](escape) by default.
 ///
 /// ```
 /// # use laby_common as laby;

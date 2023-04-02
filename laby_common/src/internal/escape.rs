@@ -10,7 +10,7 @@
 // References to std were replaced with alloc and core. Support for Miri was removed. Additional
 // documentation were added. The original source code can be found at:
 //
-//   https://github.com/Kogia-sima/sailfish/blob/master/sailfish/src/runtime/escape
+//   https://github.com/rust-sailfish/sailfish/blob/master/sailfish/src/runtime/escape
 //
 // ===============================================================================
 //

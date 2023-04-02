@@ -10,8 +10,8 @@ use laby_common::{internal::Buffer, Render};
 
 /// Renders a document type declaration.
 ///
-/// This type can be used together with the [`render!`](crate::render) macro to generate
-/// a valid HTML document.
+/// This type can be used together with the [`render!`](crate::render) macro to generate a valid
+/// HTML document.
 ///
 /// # Example
 ///

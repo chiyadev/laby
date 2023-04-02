@@ -6,11 +6,11 @@
 //
 //   https://opensource.org/licenses/MIT
 //
-// This file contains a custom string buffer implementation from sailfish.
-// References to std were replaced with alloc and core. Additional documentation were added.
-// The original source code can be found at:
+// This file contains a custom string buffer implementation from sailfish. References to std were
+// replaced with alloc and core. Additional documentation were added. The original source code can
+// be found at:
 //
-//   https://github.com/Kogia-sima/sailfish/blob/master/sailfish/src/runtime/buffer.rs
+//   https://github.com/rust-sailfish/sailfish/blob/master/sailfish/src/runtime/buffer.rs
 //
 // ===============================================================================
 //
@@ -49,8 +49,8 @@ use core::{
 
 /// Buffer for rendered contents.
 ///
-/// This is a port of [sailfish][1]'s `Buffer` struct, which is quite similar to [`String`]
-/// but with some methods re-implemented for faster buffering.
+/// This is a port of [sailfish][1]'s `Buffer` struct, which is quite similar to [`String`] but
+/// with some methods re-implemented for faster buffering.
 ///
 /// [1]: https://docs.rs/sailfish/
 ///
@@ -147,8 +147,8 @@ impl Buffer {
         self.len == 0
     }
 
-    /// Ensures that the capacity of this buffer is at least `additional` bytes
-    /// larger than its length.
+    /// Ensures that the capacity of this buffer is at least `additional` bytes larger than its
+    /// length.
     ///
     /// # Panics
     ///
@@ -162,8 +162,8 @@ impl Buffer {
         self.reserve_internal(size);
     }
 
-    /// Same as [`reserve`](Self::reserve) but does not guard against
-    /// `size` overflowing `isize::MAX`.
+    /// Same as [`reserve`](Self::reserve) but does not guard against `size` overflowing
+    /// `isize::MAX`.
     ///
     /// # Safety
     ///
@@ -262,8 +262,8 @@ fn safe_alloc(capacity: usize) -> *mut u8 {
 
 /// # Safety
 ///
-/// - if `capacity > 0`, `capacity` is the same value that was used to allocate the block
-/// of memory pointed by `ptr`.
+/// - if `capacity > 0`, `capacity` is the same value that was used to allocate the block of memory
+/// pointed by `ptr`.
 #[cold]
 #[inline(never)]
 unsafe fn safe_realloc(ptr: *mut u8, capacity: usize, new_capacity: usize) -> *mut u8 {
@@ -316,8 +316,8 @@ impl fmt::Debug for Buffer {
 impl Drop for Buffer {
     fn drop(&mut self) {
         if self.capacity != 0 {
-            // SAFETY: when `self.capacity > 0`, `self.capacity` is the same value
-            // used for allocate the block of memory pointed by `self.data`.
+            // SAFETY: when `self.capacity > 0`, `self.capacity` is the same value used for
+            // allocate the block of memory pointed by `self.data`.
             unsafe {
                 let layout = Layout::from_size_align_unchecked(self.capacity, 1);
                 dealloc(self.data, layout);
@@ -356,8 +356,8 @@ impl From<&str> for Buffer {
         let mut buf = Buffer::with_capacity(other.len());
 
         if !other.is_empty() {
-            // SAFETY: `Buffer.capacity()` should be same as `other.len()`, so if `other`
-            // is not empty, `buf.as_mut_ptr()` is supporsed to point to valid memory.
+            // SAFETY: `Buffer.capacity()` should be same as `other.len()`, so if `other` is not
+            // empty, `buf.as_mut_ptr()` is supporsed to point to valid memory.
             unsafe {
                 ptr::copy_nonoverlapping(other.as_ptr(), buf.as_mut_ptr(), other.len());
                 buf.advance(other.len());

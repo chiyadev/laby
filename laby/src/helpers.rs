@@ -12,20 +12,20 @@ use laby_common::{internal::Buffer, Render};
 
 /// Indicates that an attribute is an HTML boolean attribute.
 ///
-/// If a _normal_ attribute value evaluates to a boolean value `true` or `false`,
-/// the string representation `"true"` or `"false"` is rendered. This macro indicates
-/// that the attribute is an HTML _boolean_ attribute.
+/// If a _normal_ attribute value evaluates to a boolean value `true` or `false`, the string
+/// representation `"true"` or `"false"` is rendered. This macro indicates that the attribute is an
+/// HTML _boolean_ attribute.
 ///
-/// If a _boolean_ attribute value evalutes to `false`, it is not rendered at all. Conversely,
-/// if it evaluates to `true`, only the attribute's name is rendered without a value component
-/// (i.e. `="..."`).
+/// If a _boolean_ attribute value evalutes to `false`, it is not rendered at all. Conversely, if
+/// it evaluates to `true`, only the attribute's name is rendered without a value component (i.e.
+/// `="..."`).
 ///
-/// This is a special macro which is recognized internally by the markup macro.
-/// If called outside a markup macro, or called in an invalid position, compilation will fail.
+/// This is a special macro which is recognized internally by the markup macro. If called outside a
+/// markup macro, or called in an invalid position, compilation will fail.
 ///
-/// This macro is necessary because it is not possible for laby to determine the type of
-/// attribute value at compile time. This is a fundamental limitation of procedural macros that
-/// must operate on syntax tokens before the compiler performs any type inference.
+/// This macro is necessary because it is not possible for laby to determine the type of attribute
+/// value at compile time. This is a fundamental limitation of procedural macros that must operate
+/// on syntax tokens before the compiler performs any type inference.
 ///
 /// # Example
 ///
@@ -99,10 +99,9 @@ use alloc::string::String;
 /// assert_eq!(s, "<html><head><title>laby</title></head><body><p>paragraph</p></body></html>");
 /// ```
 ///
-/// The [`render!`] macro can render any value that implements the [`Render`] trait,
-/// which is not limited only to nodes constructed by markup macros.  See the
-/// [list of foreign impls](Render#foreign-impls) on the [`Render`] trait to see which
-/// types are supported.
+/// The [`render!`] macro can render any value that implements the [`Render`] trait, which is not
+/// limited only to nodes constructed by markup macros.  See the [list of foreign
+/// impls](Render#foreign-impls) on the [`Render`] trait to see which types are supported.
 ///
 /// ```
 /// # use laby::*;
@@ -110,8 +109,8 @@ use alloc::string::String;
 /// assert_eq!(render!(v), "100");
 /// ```
 ///
-/// All strings are escaped by default when rendered. This behavior can be opted out of by
-/// using the [`raw!`] macro.
+/// All strings are escaped by default when rendered. This behavior can be opted out of by using
+/// the [`raw!`] macro.
 ///
 /// ```
 /// # use laby::*;
@@ -122,8 +121,8 @@ use alloc::string::String;
 /// assert_eq!(raw, "a < b");
 /// ```
 ///
-/// This example renders multiple nodes using the [`render!`] macro. It is equivalent to
-/// passing a single argument using the [`frag!`][crate::frag] macro that wraps the values together.
+/// This example renders multiple nodes using the [`render!`] macro. It is equivalent to passing a
+/// single argument using the [`frag!`][crate::frag] macro that wraps the values together.
 ///
 /// ```
 /// # use laby::*;
@@ -149,11 +148,11 @@ macro_rules! render {
 
 /// Wraps an [`Iterator`], making it implement [`Render`].
 ///
-/// This is a workaround for Rust's lack of impl specialization.
-/// When Rust gets specialization, this type may no longer be necessary.
+/// This is a workaround for Rust's lack of impl specialization. When Rust gets specialization,
+/// this type may no longer be necessary.
 ///
-/// All items yielded by the iterator must implement [`Render`],
-/// which will be rendered sequentially without delimiters.
+/// All items yielded by the iterator must implement [`Render`], which will be rendered
+/// sequentially without delimiters.
 ///
 /// This renderer is lazy; the iterator wrapped by this object will only be iterated when
 /// [`render`][Render::render] is called on this object, not when this object is constructed.
@@ -182,9 +181,8 @@ impl<R: Render, I: Iterator<Item = R>> Render for RenderIterator<R, I> {
 
 /// Wraps an [`Iterator`], making it implement [`Render`], with a delimiter between items.
 ///
-/// All items yielded by the iterator must implement [`Render`],
-/// which will be rendered sequentially with a string delimiter in between.
-/// The delimiter is **not escaped**.
+/// All items yielded by the iterator must implement [`Render`], which will be rendered
+/// sequentially with a string delimiter in between. The delimiter is **not escaped**.
 ///
 /// This renderer is lazy; the iterator wrapped by this object will only be iterated when
 /// [`render`][Render::render] is called on this object, not when this object is constructed.
@@ -223,11 +221,11 @@ impl<R: Render, I: Iterator<Item = R>, S: AsRef<str>> Render for RenderIteratorD
 /// insert any delimiter between the items.
 ///
 /// When *two* arguments are given, the *first* argument specifies the string delimiter to insert
-/// between items, and the *second* argument specifies the iterator expression. Both arguments
-/// are wrapped in [`RenderIteratorDelimited`].
+/// between items, and the *second* argument specifies the iterator expression. Both arguments are
+/// wrapped in [`RenderIteratorDelimited`].
 ///
-/// If you are rendering an iterator with the newline `"\n"` string as the delimiter,
-/// consider using the [`iter_lines!`] macro instead.
+/// If you are rendering an iterator with the newline `"\n"` string as the delimiter, consider
+/// using the [`iter_lines!`] macro instead.
 ///
 /// # Expansion
 ///
@@ -245,12 +243,12 @@ impl<R: Render, I: Iterator<Item = R>, S: AsRef<str>> Render for RenderIteratorD
 ///
 /// # Example
 ///
-/// Anything that implements [`Iterator`] and yields items that implement [`Render`]
-/// can be rendered.
+/// Anything that implements [`Iterator`] and yields items that implement [`Render`] can be
+/// rendered.
 ///
 /// The following example renders three consecutive `span` elements, by mapping a range of numbers
-/// to a function that returns a node created by the [`span!`](laby_macros::span) macro.
-/// No delimiters are specified.
+/// to a function that returns a node created by the [`span!`](laby_macros::span) macro. No
+/// delimiters are specified.
 ///
 /// ```
 /// # use laby::*;
@@ -261,8 +259,8 @@ impl<R: Render, I: Iterator<Item = R>, S: AsRef<str>> Render for RenderIteratorD
 /// assert_eq!(render!(s), "<span>1</span><span>2</span><span>3</span>");
 /// ```
 ///
-/// Another example renders three consecutive `span` elements, this time with the string `", "`
-/// as the delimiter.
+/// Another example renders three consecutive `span` elements, this time with the string `", "` as
+/// the delimiter.
 ///
 /// ```
 /// # use laby::*;
@@ -383,8 +381,8 @@ impl<S: AsRef<str>> Render for RenderRaw<S> {
 ///
 /// The following example renders a malicious input string without escaping.
 ///
-/// When rendering a value wrapped in [`RenderRaw`], it is your responsibility to protect
-/// yourself from [XSS attacks][1]. laby will never perform automatic escaping for raw values.
+/// When rendering a value wrapped in [`RenderRaw`], it is your responsibility to protect yourself
+/// from [XSS attacks][1]. laby will never perform automatic escaping for raw values.
 ///
 /// [1]: https://en.wikipedia.org/wiki/Cross-site_scripting
 ///
@@ -410,13 +408,13 @@ macro_rules! raw {
 
 /// Wraps a [`Display`], making it implement [`Render`].
 ///
-/// This wrapper exists for convenience but should be avoided when writing code where
-/// performance matters.
+/// This wrapper exists for convenience but should be avoided when writing code where performance
+/// matters.
 ///
 /// The wrapped value will be formatted using an intermediary buffer, which will then be escaped
 /// and written to the output buffer. As rendering this wrapper involves an extra heap allocation,
-/// implementing the [`Render`] trait directly on the wrapped type should be preferred
-/// over using this wrapper.
+/// implementing the [`Render`] trait directly on the wrapped type should be preferred over using
+/// this wrapper.
 ///
 /// Consider using the [`disp!`] macro instead of constructing this type manually.
 pub struct RenderDisplay<D: Display>(

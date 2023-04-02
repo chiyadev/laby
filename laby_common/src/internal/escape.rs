@@ -95,7 +95,7 @@ pub fn escape(feed: &str, buf: &mut Buffer) {
 
 #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
 fn escape_impl(feed: &str, buf: &mut Buffer) {
-    use sync::atomic::{AtomicPtr, Ordering};
+    use core::sync::atomic::{AtomicPtr, Ordering};
 
     type FnRaw = *mut ();
     static FN: AtomicPtr<()> = AtomicPtr::new(detect as FnRaw);

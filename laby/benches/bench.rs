@@ -27,9 +27,9 @@ fn simple(b: &mut Bencher) {
 #[bench]
 fn simple_expanded(b: &mut Bencher) {
     b.iter(|| {
-        let mut buffer = laby::internal::Buffer::new();
-        buffer.push_str("<html><head><title>laby</title></head><body class=\"dark\"><p>hello, world</p></body></html>");
+        let mut buf = laby::internal::Buffer::new();
+        buf.push_str("<html><head><title>laby</title></head><body class=\"dark\"><p>hello, world</p></body></html>");
 
-        let _s = buffer.into_string();
+        let _s = buf.into_string();
     });
 }

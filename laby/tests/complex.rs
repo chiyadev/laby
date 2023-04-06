@@ -50,11 +50,11 @@ fn types() {
         use X::*;
 
         impl Render for X {
-            fn render(self, buffer: &mut internal::Buffer) {
+            fn render(self, buf: &mut internal::Buffer) {
                 match self {
-                    One => div!("one").render(buffer),
-                    Two => span!("two").render(buffer),
-                    Three => button!("three").render(buffer),
+                    One => div!("one").render(buf),
+                    Two => span!("two").render(buf),
+                    Three => button!("three").render(buf),
                 }
             }
         }

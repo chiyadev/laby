@@ -62,9 +62,9 @@ use alloc::string::String;
 /// ```ignore
 /// // render!($expr)
 /// {
-///     let mut buffer = Buffer::new();
-///     $expr.render(&mut buffer);
-///     buffer.into_string()
+///     let mut buf = Buffer::new();
+///     $expr.render(&mut buf);
+///     buf.into_string()
 /// }
 ///
 /// // render!($expr*)
@@ -137,9 +137,9 @@ use alloc::string::String;
 #[macro_export]
 macro_rules! render {
     ($expr:expr) => {{
-        let mut buffer = $crate::internal::Buffer::with_capacity(16384);
-        $crate::Render::render($expr, &mut buffer);
-        buffer.into_string()
+        let mut buf = $crate::internal::Buffer::with_capacity(16384);
+        $crate::Render::render($expr, &mut buf);
+        buf.into_string()
     }};
 
     ($($expr:expr),* $(,)?) => {{
@@ -185,9 +185,9 @@ where
     I::Item: Render,
 {
     #[inline]
-    fn render(self, buffer: &mut Buffer) {
+    fn render(self, buf: &mut Buffer) {
         for item in self.0 {
-            item.render(buffer);
+            item.render(buf);
         }
     }
 }
@@ -220,17 +220,17 @@ where
     S: AsRef<str>,
 {
     #[inline]
-    fn render(self, buffer: &mut Buffer) {
+    fn render(self, buf: &mut Buffer) {
         let mut first = true;
 
         for item in self.0 {
             if first {
                 first = false;
             } else {
-                buffer.push_str(self.1.as_ref());
+                buf.push_str(self.1.as_ref());
             }
 
-            item.render(buffer);
+            item.render(buf);
         }
     }
 }
@@ -357,9 +357,9 @@ macro_rules! iter_lines {
 ///
 /// impl Render for Raw<'_> {
 ///     #[inline]
-///     fn render(self, buffer: &mut Buffer) {
-///         // escape(self.0, buffer);
-///         buffer.push_str(self.0); // not escaped
+///     fn render(self, buf: &mut Buffer) {
+///         // escape(self.0, buf);
+///         buf.push_str(self.0); // not escaped
 ///     }
 /// }
 ///
@@ -390,8 +390,8 @@ where
     S: AsRef<str>,
 {
     #[inline]
-    fn render(self, buffer: &mut Buffer) {
-        buffer.push_str(self.0.as_ref());
+    fn render(self, buf: &mut Buffer) {
+        buf.push_str(self.0.as_ref());
     }
 }
 
@@ -463,8 +463,8 @@ where
     D: Display,
 {
     #[inline]
-    fn render(self, buffer: &mut Buffer) {
-        format_args!("{}", self.0).render(buffer)
+    fn render(self, buf: &mut Buffer) {
+        format_args!("{}", self.0).render(buf)
     }
 }
 

@@ -33,10 +33,10 @@ pub enum DocType {
 }
 
 impl Render for DocType {
-    fn render(self, buffer: &mut Buffer) {
+    fn render(self, buf: &mut Buffer) {
         match self {
             DocType::HTML5 => {
-                buffer.push_str("<!DOCTYPE html>");
+                buf.push_str("<!DOCTYPE html>");
             }
         }
     }

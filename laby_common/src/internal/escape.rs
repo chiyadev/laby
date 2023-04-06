@@ -84,10 +84,10 @@ use ptr::copy_nonoverlapping as memcpy_16;
 /// # use laby::internal::*;
 /// use laby::internal::Buffer;
 ///
-/// let mut buffer = Buffer::new();
-/// escape("a < b", &mut buffer);
+/// let mut buf = Buffer::new();
+/// escape("a < b", &mut buf);
 ///
-/// assert_eq!(buffer.into_string(), "a &lt; b");
+/// assert_eq!(buf.into_string(), "a &lt; b");
 /// ```
 pub fn escape(feed: &str, buf: &mut Buffer) {
     escape_impl(feed, buf)
@@ -160,9 +160,9 @@ fn escape_impl(feed: &str, buf: &mut Buffer) {
 /// ```
 #[inline]
 pub fn escape_str(s: &str) -> String {
-    let mut buffer = Buffer::new();
-    escape(s, &mut buffer);
-    buffer.into_string()
+    let mut buf = Buffer::new();
+    escape(s, &mut buf);
+    buf.into_string()
 }
 
 mod fallback {

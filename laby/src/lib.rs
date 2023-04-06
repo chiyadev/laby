@@ -104,8 +104,8 @@
 //!     struct _html {}
 //!     impl Render for _html {
 //!         #[inline]
-//!         fn render(self, buffer: &mut laby::internal::Buffer) {
-//!             buffer.push_str("<html><head><title>laby</title></head><body class=\"dark\"><p>hello, world</p></body></html>");
+//!         fn render(self, buf: &mut laby::internal::Buffer) {
+//!             buf.push_str("<html><head><title>laby</title></head><body class=\"dark\"><p>hello, world</p></body></html>");
 //!         }
 //!     }
 //!     _html {}
@@ -124,10 +124,10 @@
 //!
 //! ```
 //! # use laby::*;
-//! let mut buffer = laby::internal::Buffer::new();
-//! buffer.push_str("<html><head><title>laby</title></head><body class=\"dark\"><p>hello, world</p></body></html>");
+//! let mut buf = laby::internal::Buffer::new();
+//! buf.push_str("<html><head><title>laby</title></head><body class=\"dark\"><p>hello, world</p></body></html>");
 //!
-//! let s = buffer.into_string();
+//! let s = buf.into_string();
 //! // assert_eq!(s, ...);
 //! ```
 //!
@@ -199,14 +199,14 @@
 //!     impl<T1, T2, T3> Render for _article<T1, T2, T3>
 //!         where T1: Render, T2: Render, T3: Render {
 //!         #[inline]
-//!         fn render(self, buffer: &mut laby::internal::Buffer) {
-//!             buffer.push_str("<article class=\"");
-//!             self.t1.render(buffer); // date
-//!             buffer.push_str("\"><h1>");
-//!             self.t2.render(buffer); // title
-//!             buffer.push_str("</h1><p>");
-//!             self.t3.render(buffer); // content
-//!             buffer.push_str("</p></article>");
+//!         fn render(self, buf: &mut laby::internal::Buffer) {
+//!             buf.push_str("<article class=\"");
+//!             self.t1.render(buf); // date
+//!             buf.push_str("\"><h1>");
+//!             self.t2.render(buf); // title
+//!             buf.push_str("</h1><p>");
+//!             self.t3.render(buf); // content
+//!             buf.push_str("</p></article>");
 //!         }
 //!     }
 //!     _article {

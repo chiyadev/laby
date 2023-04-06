@@ -11,8 +11,8 @@
 //!
 //! - **Simplicity**: laby has minimal dependencies, works out of the box without any
 //! configuration, and can be easily extended to add extra functionality where necessary.
-//! - **Performance**: laby generates specialized code that generate HTML. It generally requires no
-//! heap allocation at runtime other than the buffer that the resulting HTML gets rendered to. Any
+//! - **Performance**: laby generates specialized code that generate HTML. It requires no heap
+//! allocation at runtime other than the buffer that the resulting HTML gets rendered to. Any
 //! operation that involves extra heap allocations is opt-in. All rendering code is statically type
 //! checked at compile time and inlined for performance.
 //! - **Familiarity**: laby provides macros that can accept any valid Rust code and expand to

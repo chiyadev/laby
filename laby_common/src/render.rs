@@ -11,9 +11,12 @@ use alloc::{
     borrow::{Cow, ToOwned},
     string::String,
 };
-use core::num::{
-    NonZeroI128, NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroIsize, NonZeroU128,
-    NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8, NonZeroUsize,
+use core::{
+    fmt::{Arguments, Write},
+    num::{
+        NonZeroI128, NonZeroI16, NonZeroI32, NonZeroI64, NonZeroI8, NonZeroIsize, NonZeroU128,
+        NonZeroU16, NonZeroU32, NonZeroU64, NonZeroU8, NonZeroUsize,
+    },
 };
 
 /// Formats a value into an HTML representation.
@@ -81,7 +84,7 @@ impl Render for bool {
     }
 }
 
-macro_rules! impl_ref {
+macro_rules! impl_str {
     ($type:ty) => {
         impl Render for $type {
             #[inline]
@@ -92,8 +95,8 @@ macro_rules! impl_ref {
     };
 }
 
-impl_ref!(&str);
-impl_ref!(String);
+impl_str!(&str);
+impl_str!(String);
 
 macro_rules! impl_int {
     ($type:ty) => {
@@ -190,7 +193,10 @@ macro_rules! impl_float {
 impl_float!(f32, 16, format32);
 impl_float!(f64, 24, format64);
 
-impl<R: Render> Render for Option<R> {
+impl<R> Render for Option<R>
+where
+    R: Render,
+{
     #[inline]
     fn render(self, buffer: &mut Buffer) {
         if let Some(value) = self {
@@ -199,12 +205,35 @@ impl<R: Render> Render for Option<R> {
     }
 }
 
-impl<'a, R: Render, S: Render + ToOwned<Owned = R>> Render for Cow<'a, S> {
+impl<'a, R> Render for Cow<'a, R>
+where
+    R: ToOwned,
+    &'a R: Render,
+    R::Owned: Render,
+{
     #[inline]
     fn render(self, buffer: &mut Buffer) {
         match self {
             Cow::Owned(value) => value.render(buffer),
-            Cow::Borrowed(value) => value.to_owned().render(buffer),
+            Cow::Borrowed(value) => value.render(buffer),
         }
+    }
+}
+
+impl<'a> Render for Arguments<'a> {
+    fn render(self, buffer: &mut Buffer) {
+        struct EscapingBufferWriter<'a>(&'a mut Buffer);
+
+        impl<'a> Write for EscapingBufferWriter<'a> {
+            fn write_str(&mut self, s: &str) -> core::fmt::Result {
+                Ok(s.render(self.0))
+            }
+
+            fn write_char(&mut self, c: char) -> core::fmt::Result {
+                Ok(c.render(self.0))
+            }
+        }
+
+        core::fmt::write(&mut EscapingBufferWriter(buffer), self).unwrap();
     }
 }

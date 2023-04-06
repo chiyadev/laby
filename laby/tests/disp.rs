@@ -14,12 +14,12 @@ fn normal() {
     struct X;
 
     impl Display for X {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             write!(f, "laby")
         }
     }
 
-    let n = render!(disp!(X));
+    let n = render!(format_args!("{}", X));
     assert_eq!(n, "laby");
 }
 
@@ -28,11 +28,11 @@ fn escape() {
     struct X;
 
     impl Display for X {
-        fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
             write!(f, "&&")
         }
     }
 
-    let n = render!(disp!(X));
+    let n = render!(format_args!("{}", X));
     assert_eq!(n, "&amp;&amp;");
 }

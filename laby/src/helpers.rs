@@ -6,7 +6,6 @@
 //
 //   https://opensource.org/licenses/MIT
 //
-use alloc::string::ToString;
 use core::fmt::Display;
 use laby_common::{internal::Buffer, Render};
 
@@ -161,19 +160,30 @@ macro_rules! render {
 /// [`render`][Render::render] is called on the value, not when the value is constructed.
 ///
 /// Consider using the [`iter!`](crate::iter) macro instead of constructing this type manually.
-pub struct RenderIterator<R: Render, I: Iterator<Item = R>>(
+pub struct RenderIterator<I>(
     /// The iterator from which items are rendered.
     pub I,
-);
+)
+where
+    I: Iterator,
+    I::Item: Render;
 
-impl<R: Render, I: Iterator<Item = R>> From<I> for RenderIterator<R, I> {
+impl<I> From<I> for RenderIterator<I>
+where
+    I: Iterator,
+    I::Item: Render,
+{
     #[inline]
     fn from(iter: I) -> Self {
         Self(iter)
     }
 }
 
-impl<R: Render, I: Iterator<Item = R>> Render for RenderIterator<R, I> {
+impl<I> Render for RenderIterator<I>
+where
+    I: Iterator,
+    I::Item: Render,
+{
     #[inline]
     fn render(self, buffer: &mut Buffer) {
         for item in self.0 {
@@ -192,14 +202,23 @@ impl<R: Render, I: Iterator<Item = R>> Render for RenderIterator<R, I> {
 /// [`render`][Render::render] is called on the value, not when the value is constructed.
 ///
 /// Consider using the [`iter!`](crate::iter) macro instead of constructing this type manually.
-pub struct RenderIteratorDelimited<R: Render, I: Iterator<Item = R>, S: AsRef<str>>(
+pub struct RenderIteratorDelimited<I, S>(
     /// The iterator from which items are rendered.
     pub I,
     /// The delimiter to render between the items.
     pub S,
-);
+)
+where
+    I: Iterator,
+    I::Item: Render,
+    S: AsRef<str>;
 
-impl<R: Render, I: Iterator<Item = R>, S: AsRef<str>> Render for RenderIteratorDelimited<R, I, S> {
+impl<I, S> Render for RenderIteratorDelimited<I, S>
+where
+    I: Iterator,
+    I::Item: Render,
+    S: AsRef<str>,
+{
     #[inline]
     fn render(self, buffer: &mut Buffer) {
         let mut first = true;
@@ -282,11 +301,11 @@ impl<R: Render, I: Iterator<Item = R>, S: AsRef<str>> Render for RenderIteratorD
 #[macro_export]
 macro_rules! iter {
     ($expr:expr) => {
-        $crate::RenderIterator(($expr).into_iter())
+        $crate::RenderIterator($expr.into_iter())
     };
 
     ($del:expr, $expr:expr) => {
-        $crate::RenderIteratorDelimited(($expr).into_iter(), $del)
+        $crate::RenderIteratorDelimited($expr.into_iter(), $del)
     };
 }
 
@@ -349,19 +368,27 @@ macro_rules! iter_lines {
 /// assert_eq!(s, "\"");
 /// assert_ne!(s, "&quot;");
 /// ```
-pub struct RenderRaw<S: AsRef<str>>(
+pub struct RenderRaw<S>(
     /// The value to write without escaping.
     pub S,
-);
+)
+where
+    S: AsRef<str>;
 
-impl<S: AsRef<str>> From<S> for RenderRaw<S> {
+impl<S> From<S> for RenderRaw<S>
+where
+    S: AsRef<str>,
+{
     #[inline]
     fn from(s: S) -> Self {
         Self(s)
     }
 }
 
-impl<S: AsRef<str>> Render for RenderRaw<S> {
+impl<S> Render for RenderRaw<S>
+where
+    S: AsRef<str>,
+{
     #[inline]
     fn render(self, buffer: &mut Buffer) {
         buffer.push_str(self.0.as_ref());
@@ -413,34 +440,41 @@ macro_rules! raw {
 
 /// Wraps a [`Display`], making it implement [`Render`].
 ///
-/// The wrapped value will be formatted using an intermediary buffer, which will be escaped and
-/// then written to the output buffer. As the rendering of this wrapper involves extra heap
-/// allocations for the intermediary buffer, consider implementing the [`Render`] trait directly on
-/// the wrapped type if possible.
-///
 /// Consider using the [`disp!`](crate::disp) macro instead of constructing this type manually.
-pub struct RenderDisplay<D: Display>(
+pub struct RenderDisplay<D>(
     /// The value to render.
     pub D,
-);
+)
+where
+    D: Display;
 
-impl<D: Display> From<D> for RenderDisplay<D> {
+impl<D> From<D> for RenderDisplay<D>
+where
+    D: Display,
+{
     #[inline]
     fn from(dsp: D) -> Self {
         Self(dsp)
     }
 }
 
-impl<D: Display> Render for RenderDisplay<D> {
+impl<D> Render for RenderDisplay<D>
+where
+    D: Display,
+{
     #[inline]
     fn render(self, buffer: &mut Buffer) {
-        self.0.to_string().render(buffer);
+        format_args!("{}", self.0).render(buffer)
     }
 }
 
 /// Wraps a [`Display`] in [`RenderDisplay`], making it implement [`Render`].
 ///
 /// This is a convenience macro that wraps the given expression in [`RenderDisplay`].
+///
+/// Beginning with laby `0.4`, [`Arguments`](core::fmt::Arguments) struct implements [`Render`]
+/// directly so [`disp!`] and [`RenderDisplay`] are deprecated. You should write
+/// `format_args!("{}", expr)` instead of `disp!(expr)`.
 ///
 /// # Expansion
 ///
@@ -476,6 +510,7 @@ impl<D: Display> Render for RenderDisplay<D> {
 /// assert_eq!(s, "laby");
 /// ```
 #[macro_export]
+#[deprecated(since = "0.4.0", note = "use `format_args!(\"{}\", ...)` instead")]
 macro_rules! disp {
     ($expr:expr) => {
         $crate::RenderDisplay($expr)

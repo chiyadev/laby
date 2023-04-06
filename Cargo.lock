@@ -16,7 +16,7 @@ checksum = "9028f49264629065d057f340a86acb84867925865f73bbf8d47b4d149a7e88b8"
 
 [[package]]
 name = "laby"
-version = "0.3.1"
+version = "0.4.0"
 dependencies = [
  "laby_common",
  "laby_macros",
@@ -24,7 +24,7 @@ dependencies = [
 
 [[package]]
 name = "laby_common"
-version = "0.1.4"
+version = "0.2.0"
 dependencies = [
  "itoap",
  "raw-cpuid",
@@ -33,7 +33,7 @@ dependencies = [
 
 [[package]]
 name = "laby_macros"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "laby_common",
  "proc-macro2",
@@ -43,9 +43,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.55"
+version = "1.0.56"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1d0dd4be24fcdcfeaa12a432d588dc59bbad6cad3510c67e74a2b6b2fc950564"
+checksum = "2b63bdb0cd06f1f4dedf69b254734f9b45af66e4a031e42a7480257d9898b435"
 dependencies = [
  "unicode-ident",
 ]

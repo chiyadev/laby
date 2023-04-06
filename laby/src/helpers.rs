@@ -473,7 +473,7 @@ where
 /// This is a convenience macro that wraps the given expression in [`RenderDisplay`].
 ///
 /// Beginning with laby `0.4`, [`Arguments`](core::fmt::Arguments) struct implements [`Render`]
-/// directly so [`disp!`] and [`RenderDisplay`] are deprecated. You should write
+/// directly so [`disp!`](crate::disp) and [`RenderDisplay`] are deprecated. You should write
 /// `format_args!("{}", expr)` instead of `disp!(expr)`.
 ///
 /// # Expansion

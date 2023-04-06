@@ -34,7 +34,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! laby = "0.3"
+//! laby = "0.4"
 //! ```
 //!
 //! Additionally, you may want to import laby into your code like this:

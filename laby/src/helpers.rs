@@ -165,12 +165,12 @@ pub struct RenderIterator<I>(
     pub I,
 )
 where
-    I: Iterator,
+    I: IntoIterator,
     I::Item: Render;
 
 impl<I> From<I> for RenderIterator<I>
 where
-    I: Iterator,
+    I: IntoIterator,
     I::Item: Render,
 {
     #[inline]
@@ -181,7 +181,7 @@ where
 
 impl<I> Render for RenderIterator<I>
 where
-    I: Iterator,
+    I: IntoIterator,
     I::Item: Render,
 {
     #[inline]
@@ -209,27 +209,27 @@ pub struct RenderIteratorDelimited<I, S>(
     pub S,
 )
 where
-    I: Iterator,
+    I: IntoIterator,
     I::Item: Render,
     S: AsRef<str>;
 
 impl<I, S> Render for RenderIteratorDelimited<I, S>
 where
-    I: Iterator,
+    I: IntoIterator,
     I::Item: Render,
     S: AsRef<str>,
 {
     #[inline]
     fn render(self, buf: &mut Buffer) {
-        let mut first = true;
+        let mut iter = self.0.into_iter();
+        let del = self.1.as_ref();
 
-        for item in self.0 {
-            if first {
-                first = false;
-            } else {
-                buf.push_str(self.1.as_ref());
-            }
+        if let Some(item) = iter.next() {
+            item.render(buf);
+        }
 
+        for item in iter {
+            buf.push_str(del);
             item.render(buf);
         }
     }
@@ -301,11 +301,11 @@ where
 #[macro_export]
 macro_rules! iter {
     ($expr:expr) => {
-        $crate::RenderIterator($expr.into_iter())
+        $crate::RenderIterator($expr)
     };
 
     ($del:expr, $expr:expr) => {
-        $crate::RenderIteratorDelimited($expr.into_iter(), $del)
+        $crate::RenderIteratorDelimited($expr, $del)
     };
 }
 

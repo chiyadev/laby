@@ -160,6 +160,7 @@ macro_rules! render {
 /// [`render`][Render::render] is called on the value, not when the value is constructed.
 ///
 /// Consider using the [`iter!`](crate::iter) macro instead of constructing this type manually.
+#[derive(Debug, Clone)]
 pub struct RenderIterator<I>(
     /// The iterator from which items are rendered.
     pub I,
@@ -202,6 +203,7 @@ where
 /// [`render`][Render::render] is called on the value, not when the value is constructed.
 ///
 /// Consider using the [`iter!`](crate::iter) macro instead of constructing this type manually.
+#[derive(Debug, Clone)]
 pub struct RenderIteratorDelimited<I, S>(
     /// The iterator from which items are rendered.
     pub I,
@@ -368,6 +370,7 @@ macro_rules! iter_lines {
 /// assert_eq!(s, "\"");
 /// assert_ne!(s, "&quot;");
 /// ```
+#[derive(Debug, Clone)]
 pub struct RenderRaw<S>(
     /// The value to write without escaping.
     pub S,
@@ -441,6 +444,7 @@ macro_rules! raw {
 /// Wraps a [`Display`], making it implement [`Render`].
 ///
 /// Consider using the [`disp!`](crate::disp) macro instead of constructing this type manually.
+#[derive(Debug, Clone)]
 pub struct RenderDisplay<D>(
     /// The value to render.
     pub D,
